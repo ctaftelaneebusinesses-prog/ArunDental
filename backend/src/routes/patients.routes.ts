@@ -1,0 +1,86 @@
+import path from "path";
+import { Router } from "express";
+import { prisma } from "../db/prisma";
+import { requireAuth } from "../middleware/auth.middleware";
+import { HttpError } from "../middleware/errorHandler.middleware";
+import { PATIENT_UPLOAD_DIR } from "../middleware/upload.middleware";
+
+export const patientsRouter = Router();
+
+patientsRouter.use(requireAuth);
+
+patientsRouter.get("/", async (req, res, next) => {
+  try {
+    const { q, date } = req.query;
+    const search = typeof q === "string" ? q.trim() : "";
+
+    const patients = await prisma.patient.findMany({
+      where: {
+        AND: [
+          search
+            ? {
+                OR: [
+                  { opNumber: { contains: search } },
+                  { name: { contains: search } },
+                  { mobile: { contains: search } },
+                ],
+              }
+            : {},
+          typeof date === "string" && date
+            ? { appointments: { some: { appointmentDate: date } } }
+            : {},
+        ],
+      },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+    });
+
+    res.json({
+      patients: patients.map((patient) => ({
+        id: patient.id,
+        opNumber: patient.opNumber,
+        name: patient.name,
+        mobile: patient.mobile,
+        age: patient.age,
+        gender: patient.gender,
+        bloodGroup: patient.bloodGroup,
+        createdAt: patient.createdAt,
+      })),
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+patientsRouter.get("/:id", async (req, res, next) => {
+  try {
+    const patient = await prisma.patient.findUnique({
+      where: { id: req.params.id },
+      include: { appointments: { orderBy: { appointmentDate: "desc" } } },
+    });
+
+    if (!patient) {
+      throw new HttpError(404, "Patient not found.");
+    }
+
+    res.json({ patient });
+  } catch (err) {
+    next(err);
+  }
+});
+
+patientsRouter.get("/:id/photo", async (req, res, next) => {
+  try {
+    const patient = await prisma.patient.findUnique({ where: { id: req.params.id } });
+    if (!patient) {
+      throw new HttpError(404, "Patient not found.");
+    }
+
+    const filePath = path.join(PATIENT_UPLOAD_DIR, patient.photoPath);
+    res.sendFile(filePath, (err) => {
+      if (err) next(new HttpError(404, "Photo not found."));
+    });
+  } catch (err) {
+    next(err);
+  }
+});

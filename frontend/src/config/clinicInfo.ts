@@ -1,0 +1,60 @@
+// Single source of truth for clinic identity and contact details.
+// Every page reads from this file only — update details here once and they
+// propagate everywhere (nav, footer, contact page, location page, OP slip).
+
+export interface DayHours {
+  day: string;
+  // 24-hour "HH:MM" format, or null for a closed day.
+  open: string | null;
+  close: string | null;
+}
+
+// Monday-first order, matching Date#getDay() rotated (0 = Sunday in JS).
+export const clinicHoursSchedule: DayHours[] = [
+  { day: "Monday", open: "09:00", close: "21:00" },
+  { day: "Tuesday", open: "09:00", close: "21:00" },
+  { day: "Wednesday", open: "09:00", close: "21:00" },
+  { day: "Thursday", open: "09:00", close: "21:00" },
+  { day: "Friday", open: "09:00", close: "21:00" },
+  { day: "Saturday", open: "09:00", close: "21:00" },
+  { day: "Sunday", open: "09:00", close: "13:00" },
+];
+
+export const clinicInfo = {
+  name: "Dr. Arun Dental Care",
+  doctorName: "Dr. Arun",
+  qualification: "BDS, FGD",
+  location: "Kuppam, Andhra Pradesh",
+
+  addressLine1: "Old Vijayavani School Building, BSNL Office Road, Nethaji Road",
+  addressLine2: "Bairaganipalle (Rural), Andhra Pradesh 517425",
+  fullAddress:
+    "Old Vijayavani School Building, BSNL Office Road, Nethaji Road, Bairaganipalle (Rural), Andhra Pradesh 517425",
+
+  domain: "drarundentalcare.com",
+
+  phoneDisplay: "+91 63029 52629",
+  phoneHref: "tel:+916302952629",
+
+  whatsappNumber: "916302952629",
+
+  // Built from the confirmed address above (no Google API key required).
+  googleMapsUrl:
+    "https://www.google.com/maps/search/?api=1&query=" +
+    encodeURIComponent("Dr Arun Dental Care, Old Vijayavani School Building, BSNL Office Road, Bairaganipalle, Andhra Pradesh 517425"),
+  googleMapsEmbedUrl:
+    "https://www.google.com/maps?q=" +
+    encodeURIComponent("Dr Arun Dental Care, Old Vijayavani School Building, BSNL Office Road, Bairaganipalle, Andhra Pradesh 517425") +
+    "&output=embed",
+
+  // Sourced from the clinic's public Justdial listing (Sep 2026). Review this
+  // figure periodically — it's a live number that can change — and swap in a
+  // verified Google Business rating + review count here once available.
+  ratingValue: 5.0,
+  ratingSource: "Justdial",
+} as const;
+
+export function buildWhatsAppLink(message: string): string {
+  const encoded = encodeURIComponent(message);
+  return `https://wa.me/${clinicInfo.whatsappNumber}?text=${encoded}`;
+}

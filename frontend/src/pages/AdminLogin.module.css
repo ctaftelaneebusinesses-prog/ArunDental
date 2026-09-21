@@ -1,0 +1,24 @@
+.section {
+  padding: 96px 0;
+  min-height: calc(100vh - var(--header-height));
+  display: flex;
+  align-items: center;
+  background: var(--color-pale-blue);
+}
+
+.wrap {
+  max-width: 420px;
+}
+
+.card {
+  padding: 40px 36px;
+}
+
+.heading {
+  margin-bottom: 4px;
+}
+
+.subheading {
+  color: var(--color-text-secondary);
+  margin-bottom: 28px;
+}

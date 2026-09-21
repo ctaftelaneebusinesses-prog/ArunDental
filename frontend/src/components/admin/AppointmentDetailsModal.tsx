@@ -1,0 +1,109 @@
+import { patientPhotoUrl } from "../../api/patients";
+import { clinicInfo } from "../../config/clinicInfo";
+import type { AppointmentStatus, AppointmentSummary } from "../../types";
+import { formatDateTime, telHref, whatsappHref } from "../../utils/contactLinks";
+import { Modal } from "../Modal";
+import { PhoneIcon, WhatsAppIcon } from "../icons/DentalIcons";
+import { AppointmentStatusBadge } from "./StatusBadge";
+import styles from "./PatientsPanel.module.css";
+
+interface Props {
+  appointment: AppointmentSummary;
+  busy: boolean;
+  onClose: () => void;
+  onStatusChange: (id: string, status: AppointmentStatus) => void;
+}
+
+const NEXT_STATUS: Partial<Record<AppointmentStatus, { to: AppointmentStatus; label: string }>> = {
+  Pending: { to: "Confirmed", label: "Confirm Appointment" },
+  Confirmed: { to: "Arrived", label: "Mark Arrived" },
+  Arrived: { to: "Completed", label: "Mark Completed" },
+};
+
+export function AppointmentDetailsModal({ appointment, busy, onClose, onStatusChange }: Props) {
+  const photoUrl = patientPhotoUrl(appointment.patientId);
+  const next = NEXT_STATUS[appointment.status];
+  const whatsappText = `Hello ${appointment.patientName}, this is ${clinicInfo.name} regarding your appointment (${appointment.opNumber}).`;
+
+  return (
+    <Modal title={`Appointment ${appointment.opNumber}`} onClose={onClose} wide>
+      <div className={styles.profileHeader}>
+        <a href={photoUrl} target="_blank" rel="noreferrer" title="Open full-size photo">
+          <img src={photoUrl} alt={`Photo of ${appointment.patientName}`} className={styles.photoLarge} />
+        </a>
+        <div>
+          <h3 className={styles.name}>{appointment.patientName}</h3>
+          <p className={styles.opNumber}>{appointment.opNumber}</p>
+          <AppointmentStatusBadge status={appointment.status} />
+        </div>
+      </div>
+
+      <div className={styles.quickActions}>
+        <a href={telHref(appointment.mobile)} className="btn btn-secondary btn-sm">
+          <PhoneIcon width={16} height={16} /> Call {appointment.mobile}
+        </a>
+        <a
+          href={whatsappHref(appointment.mobile, whatsappText)}
+          target="_blank"
+          rel="noreferrer"
+          className="btn btn-secondary btn-sm"
+        >
+          <WhatsAppIcon width={16} height={16} /> WhatsApp
+        </a>
+        {next && (
+          <button
+            type="button"
+            className="btn btn-primary btn-sm"
+            disabled={busy}
+            onClick={() => onStatusChange(appointment.id, next.to)}
+          >
+            {next.label}
+          </button>
+        )}
+      </div>
+
+      <dl className={styles.detailGrid}>
+        <div>
+          <dt>Appointment Date</dt>
+          <dd>{appointment.appointmentDate}</dd>
+        </div>
+        <div>
+          <dt>Preferred Time</dt>
+          <dd>{appointment.appointmentTime || "Not specified"}</dd>
+        </div>
+        <div>
+          <dt>Mobile</dt>
+          <dd>{appointment.mobile}</dd>
+        </div>
+        <div>
+          <dt>Booked On</dt>
+          <dd>{formatDateTime(appointment.createdAt)}</dd>
+        </div>
+        <div>
+          <dt>Age</dt>
+          <dd>{appointment.age ?? "Not specified"}</dd>
+        </div>
+        <div>
+          <dt>Gender</dt>
+          <dd>{appointment.gender ?? "Not specified"}</dd>
+        </div>
+        <div>
+          <dt>Blood Group</dt>
+          <dd>{appointment.bloodGroup ?? "Not specified"}</dd>
+        </div>
+        <div className={styles.fullWidth}>
+          <dt>Address</dt>
+          <dd>{appointment.address}</dd>
+        </div>
+        <div className={styles.fullWidth}>
+          <dt>Dental Problem</dt>
+          <dd>{appointment.dentalProblem || "Not provided"}</dd>
+        </div>
+        <div className={styles.fullWidth}>
+          <dt>Previous Treatment</dt>
+          <dd>{appointment.previousTreatment || "Not provided"}</dd>
+        </div>
+      </dl>
+    </Modal>
+  );
+}

@@ -1,0 +1,396 @@
+{
+  "common": {
+    "bookOp": "Book OP",
+    "enquiries": "Enquiries",
+    "callClinic": "Call Clinic",
+    "whatsapp": "WhatsApp",
+    "googleMaps": "Google Maps",
+    "backToHome": "Back to Home",
+    "learnMore": "Learn More",
+    "viewAllServices": "View All Services",
+    "aboutDoctor": "About Doctor",
+    "required": "Required",
+    "submitting": "Submitting...",
+    "doctorLine": "{{name}}, {{qualification}}"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "contact": "Contact",
+    "language": "Language",
+    "location": "Location",
+    "gallery": "Gallery"
+  },
+  "footer": {
+    "quickLinks": "Quick Links",
+    "patient": "Patient",
+    "contact": "Contact",
+    "rights": "All rights reserved."
+  },
+  "home": {
+    "meta": {
+      "title": "Dentist in Kuppam",
+      "description": "Dr. Arun Dental Care in Kuppam offers dental consultation, root canal treatment, braces, clear aligners, dental implants and teeth cleaning under Dr. Arun, BDS, FGD."
+    },
+    "hero": {
+      "headline": "Healthy Teeth. Confident Smiles.",
+      "supportText": "Dr. Arun Dental Care provides quality dental consultation and treatment for patients in Kuppam, Andhra Pradesh — from routine check-ups to specialised dental procedures, delivered with care and clear communication at every step.",
+      "imageAlt": "Illustrative graphic representing Dr. Arun Dental Care, Kuppam",
+      "panel": {
+        "care": "Patient-first care",
+        "comfort": "Comfortable, hygienic clinic",
+        "location": "Kuppam, Andhra Pradesh"
+      },
+      "eyebrow": "Your Smile • Our Priority",
+      "headlineLine1": "Healthy Teeth.",
+      "headlineLine2": "Confident Smiles.",
+      "features": {
+        "tech": "Advanced Technology",
+        "diagnostics": "Digital Diagnostics",
+        "painFree": "Pain-Free Treatment",
+        "cosmetic": "Cosmetic Dentistry",
+        "team": "Expert Team"
+      },
+      "trust": {
+        "trusted": "Trusted Care",
+        "team": "Expert Team",
+        "tech": "Modern Technology",
+        "smiles": "Healthy Smiles"
+      }
+    },
+    "why": {
+      "eyebrow": "Why Dr. Arun Dental Care",
+      "title": "Why Choose Dr. Arun Dental Care",
+      "subtitle": "A calm, considered approach to dental treatment for every patient who visits our clinic.",
+      "items": {
+        "experience": {
+          "tag": "Expertise",
+          "title": "Experienced Dental Care",
+          "description": "Consultation and treatment guided by Dr. Arun, BDS, FGD."
+        },
+        "patient": {
+          "tag": "Clarity",
+          "title": "Patient-Centered Approach",
+          "description": "Every treatment plan is discussed clearly so you understand your options."
+        },
+        "modern": {
+          "tag": "Precision",
+          "title": "Modern Treatment",
+          "description": "Contemporary dental procedures delivered with care and precision."
+        },
+        "comfort": {
+          "tag": "Comfort",
+          "title": "Comfortable Clinical Environment",
+          "description": "A calm, hygienic clinic setting designed around patient comfort."
+        }
+      },
+      "sound": {
+        "on": "Sound on",
+        "off": "Sound off"
+      }
+    },
+    "services": {
+      "eyebrow": "Treatments",
+      "title": "Featured Services",
+      "subtitle": "A look at some of the treatments available at our clinic in Kuppam."
+    },
+    "doctor": {
+      "eyebrow": "Your Dentist",
+      "bio": "Dr. Arun leads Dr. Arun Dental Care in Kuppam, providing dental consultation and treatment focused on clear communication and patient comfort throughout every visit.",
+      "imageAlt": "Placeholder portrait of Dr. Arun, to be replaced with the doctor's photograph"
+    },
+    "cta": {
+      "heading": "Ready to Take Care of Your Smile?",
+      "text": "Book your OP appointment with Dr. Arun Dental Care."
+    },
+    "contactPreview": {
+      "eyebrow": "Reach Us"
+    },
+    "trustStrip": {
+      "rating": "5.0 Rated on Justdial",
+      "doctor": "Dr. Arun, BDS, FGD",
+      "location": "Kuppam, Andhra Pradesh",
+      "hours": "Open 7 Days a Week",
+      "services": "Root Canal · Fillings · Crowns · Cleaning",
+      "book": "Call or WhatsApp to Book"
+    }
+  },
+  "about": {
+    "meta": {
+      "title": "About Dr. Arun Dental Care",
+      "description": "Learn about Dr. Arun Dental Care in Kuppam and Dr. Arun, BDS, FGD — our approach to patient-focused dental consultation and treatment."
+    },
+    "eyebrow": "About Us",
+    "title": "About Dr. Arun Dental Care",
+    "intro": "Dr. Arun Dental Care is a dental clinic based in Kuppam, Andhra Pradesh, providing dental consultation and treatment to patients across the local community. Our aim is straightforward: accurate diagnosis, clearly explained treatment options, and care delivered with attention to detail and patient comfort.",
+    "doctorProfileEyebrow": "Doctor Profile",
+    "doctorBio": "Dr. Arun provides dental consultation and treatment at Dr. Arun Dental Care in Kuppam, with a practice built around careful examination, clear explanation of findings, and treatment planned around each patient's individual needs.",
+    "approachEyebrow": "Our Approach",
+    "approachTitle": "How We Care For Our Patients",
+    "approach": {
+      "consultation": {
+        "title": "Patient-Focused Consultation",
+        "description": "Every visit starts with listening to your concerns before recommending any treatment."
+      },
+      "communication": {
+        "title": "Clear Communication",
+        "description": "Treatment options, procedures and next steps are explained clearly, so you can decide with confidence."
+      },
+      "comfort": {
+        "title": "Comfortable Treatment Experience",
+        "description": "Care is delivered in a clean, calm clinical environment focused on patient comfort."
+      }
+    },
+    "galleryEyebrow": "Our Clinic",
+    "galleryTitle": "Take a Look Inside",
+    "specializationsHighlight": "Root Canal · Dental Implants · Smile Designing · Full Mouth Rehabilitation",
+    "specializationsLabel": "Specializations"
+  },
+  "services": {
+    "meta": {
+      "title": "Dental Services in Kuppam",
+      "description": "Explore dental services at Dr. Arun Dental Care, Kuppam — general dentistry, orthodontics, restorative dentistry, dental implants, preventive dentistry, cosmetic dentistry and pediatric dentistry."
+    },
+    "eyebrow": "Our Services",
+    "title": "Dental Services",
+    "intro": "An overview of the dental treatments offered at Dr. Arun Dental Care, Kuppam. If you would like to confirm availability for a specific treatment, please use the enquiry form below.",
+    "comingSoon": "Coming soon",
+    "enquireAbout": "Enquire about this",
+    "categories": {
+      "our-specializations": {
+        "title": "Our Specializations",
+        "items": {
+          "general-dentistry": {
+            "name": "General Dentistry",
+            "description": "Comprehensive dental care for routine check-ups, diagnosis and everyday oral health."
+          },
+          "conservative-restorative-dentistry": {
+            "name": "Conservative & Restorative Dentistry",
+            "description": "Restoring the strength, shape and function of damaged or decayed teeth."
+          },
+          "dental-implants": {
+            "name": "Dental Implants",
+            "description": "Long-term tooth replacement anchored securely for a natural look and feel."
+          },
+          "root-canal-treatment": {
+            "name": "Root Canal Treatment",
+            "description": "Relieving pain and saving infected teeth through careful root canal therapy."
+          },
+          "orthodontic-braces-aligners": {
+            "name": "Orthodontic Braces & Aligners",
+            "description": "Braces and clear aligners to gradually straighten teeth and correct bite issues."
+          },
+          "smile-designing": {
+            "name": "Smile Designing",
+            "description": "A personalised plan to enhance the appearance of your smile."
+          },
+          "flap-surgery": {
+            "name": "Flap Surgery",
+            "description": "Surgical treatment for advanced gum disease, to protect teeth and supporting bone."
+          },
+          "laser-dentistry": {
+            "name": "Laser Dentistry",
+            "description": "Modern laser-assisted treatment for greater precision and patient comfort."
+          },
+          "pediatric-dentistry": {
+            "name": "Pediatric Dentistry",
+            "description": "Gentle, friendly dental care designed for young patients."
+          },
+          "full-mouth-rehabilitation": {
+            "name": "Full Mouth Rehabilitation",
+            "description": "Comprehensive restoration of all teeth for patients with extensive dental wear or damage."
+          },
+          "complete-dentures": {
+            "name": "Complete Dentures",
+            "description": "Full removable dentures to replace all missing teeth and restore function."
+          },
+          "removable-fixed-denture": {
+            "name": "Removable & Fixed Denture",
+            "description": "Partial dentures, removable or fixed, to replace some missing teeth."
+          },
+          "digital-xray": {
+            "name": "Digital X-Ray (RVG)",
+            "description": "Fast, low-radiation digital imaging to accurately diagnose dental issues."
+          },
+          "teeth-bleaching": {
+            "name": "Teeth Bleaching",
+            "description": "Safe professional whitening treatment to brighten your smile."
+          },
+          "oral-pathology-diagnosis": {
+            "name": "Oral Pathology & Diagnosis",
+            "description": "Assessment and diagnosis of conditions affecting the mouth and oral tissues."
+          },
+          "oral-medicine-radiology": {
+            "name": "Oral Medicine & Radiology",
+            "description": "Specialised imaging and medical evaluation to support accurate diagnosis and treatment."
+          }
+        }
+      }
+    }
+  },
+  "contact": {
+    "meta": {
+      "title": "Contact Us",
+      "description": "Contact Dr. Arun Dental Care in Kuppam, Andhra Pradesh. Book an OP appointment at our dental clinic."
+    },
+    "eyebrow": "Contact",
+    "bookOp": {
+      "title": "Book OP",
+      "description": "Register as a patient and book your OP appointment with Dr. Arun Dental Care."
+    },
+    "enquiries": {
+      "title": "Enquiries",
+      "description": "Have a question before booking? Send us an enquiry and our team will get back to you."
+    },
+    "reachEyebrow": "Reach Us",
+    "reachTitle": "Get in Touch",
+    "reachCall": "Call Clinic",
+    "reachWhatsapp": "WhatsApp",
+    "reachWhatsappSub": "Message the clinic",
+    "reachMaps": "Google Maps",
+    "mapTitle": "Clinic Location",
+    "book": {
+      "title": "Book Your OP Appointment",
+      "explain": "OP stands for Out-Patient — a regular visit to see Dr. Arun. Register in a minute and get your OP number instantly.",
+      "cta": "Book OP Appointment",
+      "hint": "Takes about a minute",
+      "alt": "Prefer to talk? Call or message us — we're happy to help.",
+      "next": "Next",
+      "nextHint": "Next you'll add your photo and address, then get your OP number.",
+      "step": "Step 1 of 2"
+    }
+  },
+  "bookOp": {
+    "meta": {
+      "title": "Book OP Appointment",
+      "description": "Book an OP appointment at Dr. Arun Dental Care, Kuppam. Register as a patient and receive your OP number instantly."
+    },
+    "eyebrow": "Patient Registration",
+    "title": "Book OP Appointment",
+    "subtitle": "Fill in the details below to register and receive your OP number.",
+    "photo": {
+      "label": "Patient Photo",
+      "uploadButton": "Upload Photo",
+      "changeButton": "Change Photo",
+      "captureButton": "Take Photo",
+      "hint": "JPEG, PNG or WEBP, up to 5MB. You can upload a file or take a photo now.",
+      "cameraTitle": "Take Patient Photo",
+      "cameraCapture": "Capture",
+      "cameraRetake": "Retake",
+      "cameraUsePhoto": "Use This Photo",
+      "cameraCancel": "Cancel",
+      "cameraError": "Could not access the camera. Please check permissions or upload a photo instead."
+    },
+    "fields": {
+      "name": "Patient Name",
+      "mobile": "Mobile Number",
+      "age": "Age",
+      "address": "Address",
+      "gender": "Gender",
+      "selectGender": "Select gender",
+      "bloodGroup": "Blood Group",
+      "selectBloodGroup": "Select blood group",
+      "preferredDate": "Preferred Date",
+      "preferredTime": "Preferred Time",
+      "dentalProblem": "Dental Problem / Reason for Visit",
+      "previousTreatment": "Previous Dental Treatment"
+    },
+    "consent": "I confirm that the information provided is accurate and consent to the clinic using it for appointment and patient-care purposes.",
+    "submit": "Book OP",
+    "errors": {
+      "name": "Please enter the patient's full name.",
+      "mobile": "Please enter a valid 10-digit mobile number.",
+      "address": "Please enter a complete address.",
+      "photo": "Please upload or capture a patient photo.",
+      "age": "Please enter a valid age.",
+      "consent": "Please confirm the consent statement to proceed.",
+      "generic": "Something went wrong. Please try again."
+    },
+    "stepLabel": "Step 2 of 2 — almost done"
+  },
+  "opConfirmation": {
+    "meta": {
+      "title": "OP Registration Successful",
+      "description": "Your OP appointment registration at Dr. Arun Dental Care, Kuppam has been received."
+    },
+    "noResultTitle": "No OP details found",
+    "noResultText": "Please book an OP appointment to see your confirmation here.",
+    "successTitle": "OP Registration Successful",
+    "successText": "Please keep your OP number safe for reference during your visit.",
+    "opNumberLabel": "OP No.",
+    "patientName": "Patient Name",
+    "appointmentDate": "Appointment Date",
+    "appointmentTime": "Appointment Time",
+    "timeTbc": "To be confirmed",
+    "doctor": "Doctor",
+    "footerNote": "Please bring this OP slip (printed or on your phone) at the time of your visit.",
+    "downloadSlip": "Download OP Slip",
+    "whatsappConfirmation": "WhatsApp Confirmation"
+  },
+  "enquiryForm": {
+    "fields": {
+      "name": "Name",
+      "mobile": "Mobile Number",
+      "message": "Message",
+      "callbackTime": "Preferred Callback Time",
+      "callbackPlaceholder": "e.g. Weekday evenings"
+    },
+    "submit": "Submit Enquiry",
+    "successMessage": "Enquiry submitted successfully. Our clinic team will get back to you soon.",
+    "errors": {
+      "name": "Please enter your name.",
+      "mobile": "Please enter a valid 10-digit mobile number.",
+      "message": "Please enter a short message.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "location": {
+    "meta": {
+      "title": "Visit Us in Kuppam",
+      "description": "Address, opening hours and directions for Dr. Arun Dental Care in Kuppam, Andhra Pradesh."
+    },
+    "eyebrow": "Find Us",
+    "title": "Visit Dr. Arun Dental Care",
+    "intro": "Our clinic is located in Kuppam, Andhra Pradesh. Use the details below to plan your visit, or get in touch before you come in.",
+    "addressLabel": "Address",
+    "hoursLabel": "Clinic Hours",
+    "openNow": "Open Now",
+    "closedNow": "Closed Now",
+    "getDirections": "Get Directions",
+    "ratingText": "Rated {{rating}} by patients on {{source}}",
+    "ratingNote": "Aggregate rating from public clinic listings — please verify current reviews directly on the source platform.",
+    "days": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    }
+  },
+  "gallery": {
+    "meta": {
+      "title": "Clinic Gallery",
+      "description": "Photos of Dr. Arun Dental Care in Kuppam — clinic interior, and the doctor caring for patients."
+    },
+    "eyebrow": "Gallery",
+    "title": "A Look Inside Our Clinic",
+    "intro": "A closer look at our clinic and the care we provide. More photos, including patient smile transformations, will be added here soon.",
+    "clinicEyebrow": "Our Clinic",
+    "clinicTitle": "Clinic Interior",
+    "doctorEyebrow": "In Practice",
+    "doctorTitle": "Dr. Arun With Patients",
+    "beforeAfterEyebrow": "Results",
+    "beforeAfterTitle": "Before & After",
+    "beforeAfterPending": "Before-and-after photos will be added here soon.",
+    "smileEyebrow": "Happy Patients",
+    "smileTitle": "Smile Gallery",
+    "smilePending": "Patient smile photos will be added here soon.",
+    "all": "All",
+    "close": "Close",
+    "prev": "Previous photo",
+    "next": "Next photo"
+  }
+}
