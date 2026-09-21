@@ -51,9 +51,6 @@ export function Navbar() {
 
         <div className={styles.ctaGroup}>
           <LanguageSwitcher />
-          <NavLink to="/contact?intent=enquiry" className="btn btn-secondary btn-sm">
-            {t("common.enquiries")}
-          </NavLink>
           <NavLink to="/book-op" className="btn btn-primary btn-sm">
             {t("common.bookOp")}
           </NavLink>
@@ -90,9 +87,6 @@ export function Navbar() {
           <div className={styles.mobileCtas}>
             <NavLink to="/book-op" className="btn btn-primary btn-block">
               {t("common.bookOp")}
-            </NavLink>
-            <NavLink to="/contact?intent=enquiry" className="btn btn-secondary btn-block">
-              {t("common.enquiries")}
             </NavLink>
           </div>
         </div>

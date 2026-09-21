@@ -26,7 +26,8 @@
     "quickLinks": "Quick Links",
     "patient": "Patient",
     "contact": "Contact",
-    "rights": "All rights reserved."
+    "rights": "All rights reserved.",
+    "poweredBy": "Powered by"
   },
   "home": {
     "meta": {
