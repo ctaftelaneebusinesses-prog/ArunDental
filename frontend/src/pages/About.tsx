@@ -32,6 +32,12 @@ const SPECIALIZATION_ICONS = [
   CrownIcon,
 ];
 
+const ACTION_PHOTOS = [
+  { src: "/assets/photos/treating-3.webp", alt: "Dr. Arun treating a young patient", wide: false },
+  { src: "/assets/photos/treating-6.webp", alt: "Dentists at work in the clinic", wide: true },
+  { src: "/assets/photos/camp-3.webp", alt: "Dr. Arun with students at a free health camp", wide: false },
+] as const;
+
 const MAX_TILT = 8;
 
 /** Tilts the portrait toward the cursor (mouse only) without re-rendering. */
@@ -249,6 +255,23 @@ export default function About() {
               </Link>
             </div>
           </Reveal>
+        </div>
+      </section>
+
+      {/* ---------- Care in action ---------- */}
+      <section className={styles.action}>
+        <div className="container">
+          <Reveal className="section-heading">
+            <span className="eyebrow">{t("about.actionEyebrow")}</span>
+            <h2>{t("about.actionTitle")}</h2>
+          </Reveal>
+          <div className={styles.actionGrid}>
+            {ACTION_PHOTOS.map((photo, index) => (
+              <Reveal key={photo.src} delay={index * 100} className={`${styles.actionCard} ${photo.wide ? styles.actionWide : ""}`}>
+                <img src={photo.src} alt={photo.alt} loading="lazy" />
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 

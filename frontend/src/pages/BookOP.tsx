@@ -6,6 +6,7 @@ import { CalendarCheckIcon, MapPinIcon, PhoneIcon, ShieldCheckIcon, WhatsAppIcon
 import { clinicInfo, clinicHoursSchedule } from "../config/clinicInfo";
 import { formatHoursRange, getTodaysHours, isClinicOpenNow } from "../utils/clinicHours";
 import { submitBookOp } from "../api/appointments";
+import { OCCUPATIONS, OTHER_OCCUPATION } from "../data/occupations";
 import { ApiError } from "../api/client";
 import type { BloodGroup, Gender } from "../types";
 import styles from "./BookOP.module.css";
@@ -64,6 +65,8 @@ export default function BookOP() {
   // Details typed into the short form on the Contact page (step 1) arrive via router state.
   const prefill = (location.state as { prefill?: Partial<Pick<FormValues, "name" | "mobile" | "preferredDate">> } | null)?.prefill;
   const [values, setValues] = useState<FormValues>({ ...INITIAL_VALUES, ...prefill });
+  // Only used when "Other" is chosen from the occupation dropdown.
+  const [otherOccupation, setOtherOccupation] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -104,7 +107,10 @@ export default function BookOP() {
         age: values.age || undefined,
         gender: values.gender || undefined,
         bloodGroup: values.bloodGroup || undefined,
-        occupation: values.occupation.trim() || undefined,
+        occupation:
+          values.occupation === OTHER_OCCUPATION
+            ? otherOccupation.trim() || OTHER_OCCUPATION
+            : values.occupation || undefined,
         preferredDate: values.preferredDate || undefined,
         dentalProblem: values.dentalProblem.trim() || undefined,
         previousTreatment: values.previousTreatment.trim() || undefined,
@@ -299,14 +305,33 @@ export default function BookOP() {
 
               <div className="field">
                 <label htmlFor="occupation">{t("bookOp.fields.occupation")}</label>
-                <input
+                <select
                   id="occupation"
-                  type="text"
-                  maxLength={100}
-                  placeholder={t("bookOp.fields.occupationPlaceholder")}
                   value={values.occupation}
-                  onChange={(e) => update("occupation", e.target.value)}
-                />
+                  onChange={(e) => {
+                    update("occupation", e.target.value);
+                    if (e.target.value !== OTHER_OCCUPATION) setOtherOccupation("");
+                  }}
+                >
+                  <option value="">{t("bookOp.fields.selectOccupation")}</option>
+                  {OCCUPATIONS.map((item) => (
+                    <option key={item.key} value={item.value}>
+                      {t(`bookOp.occupations.${item.key}`, item.value)}
+                    </option>
+                  ))}
+                </select>
+                {values.occupation === OTHER_OCCUPATION && (
+                  <input
+                    id="occupation-other"
+                    type="text"
+                    maxLength={100}
+                    style={{ marginTop: 10 }}
+                    placeholder={t("bookOp.fields.occupationOther")}
+                    aria-label={t("bookOp.fields.occupationOther")}
+                    value={otherOccupation}
+                    onChange={(e) => setOtherOccupation(e.target.value)}
+                  />
+                )}
               </div>
 
               <div className="field">

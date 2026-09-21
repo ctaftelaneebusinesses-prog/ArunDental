@@ -25,6 +25,7 @@ export function submitBookOp(values: BookOpFormValues): Promise<OpConfirmationRe
     age: values.age || undefined,
     gender: values.gender || undefined,
     bloodGroup: values.bloodGroup || undefined,
+    occupation: values.occupation || undefined,
     preferredDate: values.preferredDate || undefined,
     preferredTime: values.preferredTime || undefined,
     dentalProblem: values.dentalProblem || undefined,
