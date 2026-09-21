@@ -177,7 +177,7 @@ export default function About() {
               >
                 <div className={styles.photoFrame}>
                   <img
-                    src="/assets/clinic/doctor-arun-portrait.webp"
+                    src="/assets/photos/doctor-outdoor.webp"
                     alt={`${clinicInfo.doctorName}, ${clinicInfo.qualification}`}
                     width={480}
                     height={640}
@@ -247,9 +247,6 @@ export default function About() {
                 {t("common.bookOp")}
                 <ArrowRightIcon width={18} height={18} />
               </Link>
-              <Link to="/contact?intent=enquiry" className="btn btn-secondary">
-                {t("common.enquiries")}
-              </Link>
             </div>
           </Reveal>
         </div>
@@ -308,9 +305,6 @@ export default function About() {
               >
                 {t("common.bookOp")}
                 <ArrowRightIcon width={18} height={18} />
-              </Link>
-              <Link to="/contact?intent=enquiry" className="btn btn-on-dark">
-                {t("common.enquiries")}
               </Link>
             </div>
           </div>

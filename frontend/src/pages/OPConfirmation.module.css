@@ -113,9 +113,20 @@
     display: none !important;
   }
 
-  .slip {
-    border: none;
-    box-shadow: none;
+  .section {
     padding: 0;
+  }
+
+  .slip {
+    box-shadow: none;
+    padding: 24px 0 0;
+    break-inside: avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .opBadge {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }

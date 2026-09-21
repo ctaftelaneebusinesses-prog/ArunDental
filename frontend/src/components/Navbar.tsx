@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { clinicInfo } from "../config/clinicInfo";
-import { CloseIcon, MenuIcon, ToothIcon } from "./icons/DentalIcons";
+import { CloseIcon, MenuIcon } from "./icons/DentalIcons";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import styles from "./Navbar.module.css";
 
@@ -24,10 +24,10 @@ export function Navbar() {
   ];
 
   return (
-    <header className={styles.header}>
+    <header className={styles.header} data-print-hide>
       <div className={styles.bar}>
         <NavLink to="/" className={styles.brand} aria-label={`${clinicInfo.name} home`}>
-          <ToothIcon className={styles.brandMark} width={44} height={44} strokeWidth={1.4} aria-hidden="true" />
+          <img src="/assets/brand/logo.png" alt="" className={styles.brandMark} width={48} height={48} />
           <span className={styles.brandText}>
             <span className={styles.brandName}>{clinicInfo.name}</span>
             <span className={styles.brandTag}>
@@ -54,6 +54,16 @@ export function Navbar() {
           <NavLink to="/book-op" className="btn btn-primary btn-sm">
             {t("common.bookOp")}
           </NavLink>
+          <a
+            href="https://craftlanee.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.powered}
+            aria-label={`${t("footer.poweredBy")} CraftLanee`}
+          >
+            <span className={styles.poweredText}>{t("footer.poweredBy")}</span>
+            <img src="/assets/craftlanee-logo-mark.png" alt="CraftLanee" className={styles.poweredLogo} />
+          </a>
         </div>
 
         <button
@@ -89,6 +99,16 @@ export function Navbar() {
               {t("common.bookOp")}
             </NavLink>
           </div>
+          <a
+            href="https://craftlanee.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.mobilePowered}
+            aria-label={`${t("footer.poweredBy")} CraftLanee`}
+          >
+            <span className={styles.poweredText}>{t("footer.poweredBy")}</span>
+            <img src="/assets/craftlanee-logo-mark.png" alt="CraftLanee" className={styles.poweredLogo} />
+          </a>
         </div>
       )}
     </header>

@@ -13,7 +13,7 @@ import smileMan from "../mensmile.jpg";
 import smileBoy from "../boysmile.webp";
 import styles from "./Gallery.module.css";
 
-type Category = "clinic" | "doctor" | "smiles";
+type Category = "clinic" | "doctor" | "camps" | "smiles";
 
 interface Photo {
   id: string;
@@ -24,23 +24,57 @@ interface Photo {
 
 const PHOTOS: Photo[] = [
   { id: "reception", src: "/assets/clinic/clinic-reception-branding.webp", alt: "Reception area at Dr. Arun Dental Care", category: "clinic" },
+  { id: "treating-1", src: "/assets/photos/treating-1.webp", alt: "Dr. Arun treating a patient", category: "doctor" },
+  { id: "camp-1", src: "/assets/photos/camp-1.webp", alt: "Free dental health camp in the community", category: "camps" },
   { id: "storefront", src: "/assets/clinic/clinic-storefront.webp", alt: "Dr. Arun Dental Care clinic entrance", category: "clinic" },
-  { id: "treating", src: "/assets/clinic/doctor-treating-patient.webp", alt: "Dr. Arun treating a patient", category: "doctor" },
   { id: "woman", src: smileWoman, alt: "Smiling patient", category: "smiles" },
+  { id: "treating-2", src: "/assets/photos/treating-2.webp", alt: "Dr. Arun examining a young patient", category: "doctor" },
+  { id: "camp-2", src: "/assets/photos/camp-2.webp", alt: "Dr. Arun attending patients at a dental camp", category: "camps" },
   { id: "chair-1", src: "/assets/clinic/treatment-chair-1.webp", alt: "Dental treatment chair", category: "clinic" },
   { id: "man", src: smileMan, alt: "Smiling patient during a dental visit", category: "smiles" },
+  { id: "treating-3", src: "/assets/photos/treating-3.webp", alt: "Dr. Arun treating a child", category: "doctor" },
+  { id: "camp-3", src: "/assets/photos/camp-3.webp", alt: "Team photo at a free medical and dental camp", category: "camps" },
   { id: "chair-2", src: "/assets/clinic/treatment-chair-2.webp", alt: "Dental treatment chair, second operatory", category: "clinic" },
+  { id: "with-child", src: "/assets/photos/doctor-with-child.webp", alt: "Dr. Arun with a happy young patient", category: "smiles" },
+  { id: "treating", src: "/assets/clinic/doctor-treating-patient.webp", alt: "Dr. Arun treating a patient", category: "doctor" },
   { id: "young-woman", src: smileYoungWoman, alt: "Smiling patient with a bright, confident smile", category: "smiles" },
+  { id: "camp-4", src: "/assets/photos/camp-4.webp", alt: "Dental screening at a school camp", category: "camps" },
   { id: "room", src: "/assets/clinic/treatment-room-wide.webp", alt: "Treatment room at Dr. Arun Dental Care", category: "clinic" },
-  { id: "consulting", src: "/assets/clinic/consultation-candid.webp", alt: "Dr. Arun consulting with a patient", category: "doctor" },
+  { id: "treating-4", src: "/assets/photos/treating-4.webp", alt: "Dr. Arun with a patient in the chair", category: "doctor" },
   { id: "child", src: smileChild, alt: "Smiling child after a dental check-up", category: "smiles" },
+  { id: "doctor-smile", src: "/assets/photos/doctor-smile.webp", alt: "Dr. Arun", category: "doctor" },
+  { id: "camp-5", src: "/assets/photos/camp-5.webp", alt: "Dr. Arun with the team at a health camp", category: "camps" },
   { id: "waiting-1", src: "/assets/clinic/waiting-area-1.webp", alt: "Patient waiting area", category: "clinic" },
+  { id: "treating-5", src: "/assets/photos/treating-5.webp", alt: "Dr. Arun during a treatment", category: "doctor" },
   { id: "boy", src: smileBoy, alt: "Smiling boy after a dental check-up", category: "smiles" },
+  { id: "treating-6", src: "/assets/photos/treating-6.webp", alt: "Dentists at work in the clinic", category: "doctor" },
   { id: "waiting-2", src: "/assets/clinic/waiting-area-2.webp", alt: "Patient waiting area, alternate view", category: "clinic" },
+  { id: "child-visit", src: "/assets/photos/child-visit.webp", alt: "Young patient learning about dental care", category: "smiles" },
+  { id: "consulting", src: "/assets/clinic/consultation-candid.webp", alt: "Dr. Arun consulting with a patient", category: "doctor" },
+  { id: "result-smile", src: "/assets/photos/result-smile.webp", alt: "Restored smile after treatment", category: "smiles" },
   { id: "desk", src: "/assets/clinic/consultation-desk.webp", alt: "Consultation desk at Dr. Arun Dental Care", category: "clinic" },
+  { id: "walk", src: "/assets/photos/doctor-clinic-walk.webp", alt: "Dr. Arun in the clinic", category: "doctor" },
 ];
 
-const FILTERS = ["all", "clinic", "doctor", "smiles"] as const;
+// Before / after results, cropped from clinic posts
+interface Result {
+  id: string;
+  src: string;
+  alt: string;
+  xray?: boolean;
+}
+
+const RESULTS: Result[] = [
+  { id: "portrait", src: beforeAfter, alt: "Patient before and after dental treatment" },
+  { id: "teeth-poster", src: "/assets/photos/ba-teeth-poster.webp", alt: "Teeth before and after treatment" },
+  { id: "crown", src: "/assets/photos/ba-crown.webp", alt: "Tooth before and after a crown / cap and root canal treatment" },
+  { id: "teeth-stack", src: "/assets/photos/ba-teeth-stack.webp", alt: "Front teeth before and after treatment" },
+  { id: "xray-poster", src: "/assets/photos/ba-xray-poster.webp", alt: "Dental X-ray before and after root canal treatment", xray: true },
+  { id: "xray", src: xrayBeforeAfter, alt: "Dental X-ray before and after treatment", xray: true },
+  { id: "xray-pair", src: "/assets/photos/xray-pair.webp", alt: "Dental X-rays showing treatment results", xray: true },
+];
+
+const FILTERS = ["all", "clinic", "doctor", "camps", "smiles"] as const;
 type Filter = (typeof FILTERS)[number];
 
 const RIBBON_ROWS = [PHOTOS.filter((_, i) => i % 2 === 0), PHOTOS.filter((_, i) => i % 2 === 1)];
@@ -59,6 +93,8 @@ export default function Gallery() {
         return t("gallery.clinicEyebrow");
       case "doctor":
         return t("gallery.doctorEyebrow");
+      case "camps":
+        return t("gallery.camps");
       case "smiles":
         return t("gallery.smileEyebrow");
       default:
@@ -183,18 +219,14 @@ export default function Gallery() {
           </Reveal>
 
           <div className={styles.resultGrid}>
-            <Reveal className={styles.resultCard}>
-              <div className={styles.resultFrame}>
-                <img src={beforeAfter} alt="Patient before and after dental treatment" />
-                <span className={styles.sheen} aria-hidden="true" />
-              </div>
-            </Reveal>
-            <Reveal delay={140} className={`${styles.resultCard} ${styles.xrayCard}`}>
-              <div className={`${styles.resultFrame} ${styles.xrayFrame}`}>
-                <img src={xrayBeforeAfter} alt="Dental X-ray before and after treatment" />
-                <span className={styles.scan} aria-hidden="true" />
-              </div>
-            </Reveal>
+            {RESULTS.map((result, index) => (
+              <Reveal key={result.id} delay={(index % 3) * 100} className={styles.resultCard}>
+                <div className={`${styles.resultFrame} ${result.xray ? styles.xrayFrame : ""}`}>
+                  <img src={result.src} alt={result.alt} loading="lazy" />
+                  {result.xray ? <span className={styles.scan} aria-hidden="true" /> : <span className={styles.sheen} aria-hidden="true" />}
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>

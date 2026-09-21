@@ -1,0 +1,92 @@
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.tooth {
+  outline: none;
+}
+
+.toothInteractive {
+  cursor: pointer;
+}
+
+.circle {
+  fill: #ffffff;
+  stroke: #4f6386;
+  stroke-width: 1.2;
+  transition: stroke var(--transition-fast), fill var(--transition-fast);
+}
+
+.toothInteractive:hover .circle,
+.toothInteractive:focus-visible .circle {
+  stroke: var(--color-primary);
+  stroke-width: 2;
+}
+
+.number {
+  font-size: 10px;
+  font-weight: 600;
+  fill: #33455f;
+  pointer-events: none;
+  user-select: none;
+}
+
+.numberSmall {
+  font-size: 8.5px;
+}
+
+.caption {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  fill: #7b8aa3;
+  pointer-events: none;
+}
+
+.captionSmall {
+  font-size: 9px;
+}
+
+/* marks: each reads differently even on a black-and-white printer */
+.caries {
+  fill: #fbd5d5;
+  stroke: #d64545;
+  stroke-width: 2.4;
+}
+
+.filling {
+  fill: #1677ff;
+  stroke: #0f62e0;
+}
+
+.rct {
+  fill: #0b3a82;
+  stroke: #0b3a82;
+}
+
+.filling + .number,
+.rct + .number {
+  fill: #ffffff;
+}
+
+.missing {
+  fill: none;
+  stroke-dasharray: 3 3;
+  opacity: 0.45;
+}
+
+.extraction line {
+  stroke: #d64545;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+@media print {
+  .svg {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

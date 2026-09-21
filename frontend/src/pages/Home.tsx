@@ -69,9 +69,6 @@ export default function Home() {
                 {t("common.bookOp")}
                 <ArrowRightIcon width={20} height={20} strokeWidth={2} />
               </Link>
-              <Link to="/contact?intent=enquiry" className={`btn btn-secondary ${styles.heroBtn}`}>
-                {t("common.enquiries")}
-              </Link>
             </div>
             <ul className={`${styles.trustRow} ${styles.rise}`} style={{ animationDelay: "340ms" }}>
               {HERO_TRUST.map((item) => (
@@ -131,9 +128,6 @@ export default function Home() {
           <div className={styles.ctaActions}>
             <Link to="/book-op" className="btn btn-primary">
               {t("common.bookOp")}
-            </Link>
-            <Link to="/contact?intent=enquiry" className="btn btn-on-dark">
-              {t("common.enquiries")}
             </Link>
           </div>
         </Reveal>

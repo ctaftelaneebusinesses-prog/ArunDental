@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { fetchPatient, patientPhotoUrl, searchPatients } from "../../api/patients";
+import { fetchPatient, searchPatients } from "../../api/patients";
 import { ApiError } from "../../api/client";
 import type { PatientDetail, PatientSummary } from "../../types";
 import { Modal } from "../Modal";
 import { AppointmentStatusBadge } from "./StatusBadge";
+import { PatientAvatar } from "./PatientAvatar";
 import tableStyles from "./AdminTable.module.css";
 import styles from "./PatientsPanel.module.css";
 
@@ -125,10 +126,12 @@ export function PatientsPanel() {
           {!detailLoading && selectedPatient && (
             <div className={styles.profile}>
               <div className={styles.profileHeader}>
-                <img
-                  src={patientPhotoUrl(selectedPatient.id)}
-                  alt={`Photo of ${selectedPatient.name}`}
-                  className={styles.photo}
+                <PatientAvatar
+                  patientId={selectedPatient.id}
+                  name={selectedPatient.name}
+                  hasPhoto={Boolean(selectedPatient.photoPath)}
+                  size={72}
+                  square
                 />
                 <div>
                   <h3 className={styles.name}>{selectedPatient.name}</h3>
@@ -152,6 +155,10 @@ export function PatientsPanel() {
                 <div>
                   <dt>Blood Group</dt>
                   <dd>{selectedPatient.bloodGroup ?? "Not specified"}</dd>
+                </div>
+                <div>
+                  <dt>Occupation</dt>
+                  <dd>{selectedPatient.occupation || "Not specified"}</dd>
                 </div>
                 <div className={styles.fullWidth}>
                   <dt>Address</dt>

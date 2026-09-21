@@ -1,4 +1,5 @@
 import { patientPhotoUrl } from "../../api/patients";
+import { PatientAvatar } from "./PatientAvatar";
 import { clinicInfo } from "../../config/clinicInfo";
 import type { AppointmentStatus, AppointmentSummary } from "../../types";
 import { formatDateTime, telHref, whatsappHref } from "../../utils/contactLinks";
@@ -28,9 +29,13 @@ export function AppointmentDetailsModal({ appointment, busy, onClose, onStatusCh
   return (
     <Modal title={`Appointment ${appointment.opNumber}`} onClose={onClose} wide>
       <div className={styles.profileHeader}>
-        <a href={photoUrl} target="_blank" rel="noreferrer" title="Open full-size photo">
-          <img src={photoUrl} alt={`Photo of ${appointment.patientName}`} className={styles.photoLarge} />
-        </a>
+        {appointment.hasPhoto ? (
+          <a href={photoUrl} target="_blank" rel="noreferrer" title="Open full-size photo">
+            <img src={photoUrl} alt={`Photo of ${appointment.patientName}`} className={styles.photoLarge} />
+          </a>
+        ) : (
+          <PatientAvatar patientId={appointment.patientId} name={appointment.patientName} hasPhoto={false} size={104} square />
+        )}
         <div>
           <h3 className={styles.name}>{appointment.patientName}</h3>
           <p className={styles.opNumber}>{appointment.opNumber}</p>
@@ -90,6 +95,10 @@ export function AppointmentDetailsModal({ appointment, busy, onClose, onStatusCh
         <div>
           <dt>Blood Group</dt>
           <dd>{appointment.bloodGroup ?? "Not specified"}</dd>
+        </div>
+        <div>
+          <dt>Occupation</dt>
+          <dd>{appointment.occupation || "Not specified"}</dd>
         </div>
         <div className={styles.fullWidth}>
           <dt>Address</dt>

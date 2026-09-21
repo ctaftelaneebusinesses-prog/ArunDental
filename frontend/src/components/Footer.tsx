@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { clinicInfo } from "../config/clinicInfo";
-import { MapPinIcon, PhoneIcon, WhatsAppIcon } from "./icons/DentalIcons";
+import { InstagramIcon, MapPinIcon, PhoneIcon, WhatsAppIcon } from "./icons/DentalIcons";
 import styles from "./Footer.module.css";
 
 export function Footer() {
@@ -9,9 +9,10 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className={styles.footer}>
+    <footer className={styles.footer} data-print-hide>
       <div className={`container ${styles.grid}`}>
         <div className={styles.about}>
+          <img src="/assets/brand/logo.png" alt="" className={styles.logo} width={64} height={64} />
           <h3 className={styles.brand}>{clinicInfo.name}</h3>
           <p className={styles.tagline}>
             {clinicInfo.doctorName}, {clinicInfo.qualification}
@@ -46,9 +47,6 @@ export function Footer() {
             <li>
               <NavLink to="/book-op">{t("common.bookOp")}</NavLink>
             </li>
-            <li>
-              <NavLink to="/contact?intent=enquiry">{t("common.enquiries")}</NavLink>
-            </li>
           </ul>
         </div>
 
@@ -66,6 +64,11 @@ export function Footer() {
               </a>
             </li>
             <li>
+              <a href={clinicInfo.instagramUrl} target="_blank" rel="noopener noreferrer">
+                <InstagramIcon width={16} height={16} /> {t("common.instagram")}
+              </a>
+            </li>
+            <li>
               <a href={clinicInfo.googleMapsUrl} target="_blank" rel="noreferrer">
                 <MapPinIcon width={16} height={16} /> {t("common.googleMaps")}
               </a>
@@ -75,10 +78,20 @@ export function Footer() {
       </div>
 
       <div className={styles.bottomBar}>
-        <div className="container">
+        <div className={`container ${styles.bottomInner}`}>
           <p>
             © {year} {clinicInfo.name}. {t("footer.rights")}
           </p>
+          <a
+            href="https://craftlanee.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.powered}
+            aria-label={`${t("footer.poweredBy")} CraftLanee`}
+          >
+            <span>{t("footer.poweredBy")}</span>
+            <img src="/assets/craftlanee-logo-mark.png" alt="CraftLanee" className={styles.poweredLogo} />
+          </a>
         </div>
       </div>
     </footer>

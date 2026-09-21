@@ -69,13 +69,18 @@ Gender and blood-group dropdown *option values* (Male/Female/…, A+/B−/…) a
 English in every language, since they're stored as literal values the backend and admin dashboard
 both depend on — only their field labels are translated.
 
-## 5. Patient photo: upload or live camera capture
+## 5. Photos
 
-The Book OP form's photo field supports both **uploading a file** and **taking a photo live** via
-the device camera (`navigator.mediaDevices.getUserMedia`), landing in
-`frontend/src/components/CameraCapture.tsx`. Camera capture requires HTTPS (or `localhost`) — browsers
-block camera access on plain HTTP in production. A captured photo goes through the exact same
-validation, upload and storage path as an uploaded file.
+**Book OP** no longer asks patients for a photo. Patients booked online have none; the admin
+dashboard shows an initials avatar for them. Older records that already have a photo still show it
+(the backend still accepts an optional photo upload, and `GET /api/patients/:id/photo` still serves
+stored ones). A patient without a photo is stored with an empty `photoPath`.
+
+**Examination Form** (admin dashboard) has an optional **Photos** section: the doctor can **add
+files** or **take a photo** with the computer's camera (`frontend/src/components/CameraCapture.tsx`,
+which needs HTTPS or `localhost`). Attached photos print on a **second page** after the form; with no
+photos the form prints alone. They are not uploaded anywhere — they live in the browser (best-effort
+local storage) until the form is cleared.
 
 ## 6. Database
 

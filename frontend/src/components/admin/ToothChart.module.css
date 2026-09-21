@@ -1,0 +1,151 @@
+.wrap {
+  width: 100%;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.midline {
+  stroke: #9aa9c2;
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+
+.side {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  fill: #6b7a93;
+}
+
+.tooth {
+  outline: none;
+}
+
+.shape {
+  fill: #ffffff;
+  stroke: #4f6386;
+  stroke-width: 1.2;
+  transition: stroke var(--transition-fast), fill var(--transition-fast);
+}
+
+.toothInteractive {
+  cursor: pointer;
+}
+
+.toothInteractive:hover .shape,
+.toothInteractive:focus-visible .shape {
+  stroke: var(--color-primary);
+  stroke-width: 1.8;
+}
+
+.toothInteractive:hover .label,
+.toothInteractive:focus-visible .label {
+  fill: var(--color-primary);
+}
+
+.toothMissing .shape {
+  fill: none;
+  stroke-dasharray: 3 3;
+  opacity: 0.45;
+}
+
+.crownFilled {
+  fill: #1677ff;
+}
+
+.rootFilled {
+  fill: #0b3a82;
+}
+
+.caries {
+  fill: #d64545;
+  stroke: #ffffff;
+  stroke-width: 0.8;
+}
+
+.extraction line {
+  stroke: #d64545;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+.label {
+  font-size: 13.5px;
+  font-weight: 600;
+  fill: #33455f;
+  user-select: none;
+}
+
+.labelSmall {
+  font-size: 11.5px;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 16px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.72rem;
+  color: #4a5b78;
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swatch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 13px;
+  height: 13px;
+  border: 1px solid #4f6386;
+  border-radius: 3px;
+  background: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.swatchCaries {
+  background: radial-gradient(circle at center, #d64545 0 38%, #ffffff 42%);
+}
+
+.swatchFilling {
+  background: #1677ff;
+  border-color: #1677ff;
+}
+
+.swatchRct {
+  background: #0b3a82;
+  border-color: #0b3a82;
+}
+
+.swatchExtraction {
+  border-color: transparent;
+  color: #d64545;
+  font-size: 17px;
+}
+
+.swatchMissing {
+  border-style: dashed;
+  opacity: 0.6;
+}
+
+@media print {
+  .svg,
+  .swatch {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

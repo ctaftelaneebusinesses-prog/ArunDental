@@ -1,9 +1,9 @@
 {
   "common": {
     "bookOp": "Book OP",
-    "enquiries": "Enquiries",
     "callClinic": "Call Clinic",
     "whatsapp": "WhatsApp",
+    "instagram": "Instagram",
     "googleMaps": "Google Maps",
     "backToHome": "Back to Home",
     "learnMore": "Learn More",
@@ -155,9 +155,8 @@
     },
     "eyebrow": "Our Services",
     "title": "Dental Services",
-    "intro": "An overview of the dental treatments offered at Dr. Arun Dental Care, Kuppam. If you would like to confirm availability for a specific treatment, please use the enquiry form below.",
+    "intro": "An overview of the dental treatments offered at Dr. Arun Dental Care, Kuppam.",
     "comingSoon": "Coming soon",
-    "enquireAbout": "Enquire about this",
     "categories": {
       "our-specializations": {
         "title": "Our Specializations",
@@ -240,10 +239,6 @@
       "title": "Book OP",
       "description": "Register as a patient and book your OP appointment with Dr. Arun Dental Care."
     },
-    "enquiries": {
-      "title": "Enquiries",
-      "description": "Have a question before booking? Send us an enquiry and our team will get back to you."
-    },
     "reachEyebrow": "Reach Us",
     "reachTitle": "Get in Touch",
     "reachCall": "Call Clinic",
@@ -258,7 +253,7 @@
       "hint": "Takes about a minute",
       "alt": "Prefer to talk? Call or message us — we're happy to help.",
       "next": "Next",
-      "nextHint": "Next you'll add your photo and address, then get your OP number.",
+      "nextHint": "Next you'll add your address and visit details, then get your OP number.",
       "step": "Step 1 of 2"
     }
   },
@@ -295,7 +290,9 @@
       "preferredDate": "Preferred Date",
       "preferredTime": "Preferred Time",
       "dentalProblem": "Dental Problem / Reason for Visit",
-      "previousTreatment": "Previous Dental Treatment"
+      "previousTreatment": "Previous Dental Treatment",
+      "occupation": "Occupation",
+      "occupationPlaceholder": "e.g. Doctor, Teacher, Principal"
     },
     "consent": "I confirm that the information provided is accurate and consent to the clinic using it for appointment and patient-care purposes.",
     "submit": "Book OP",
@@ -308,7 +305,12 @@
       "consent": "Please confirm the consent statement to proceed.",
       "generic": "Something went wrong. Please try again."
     },
-    "stepLabel": "Step 2 of 2 — almost done"
+    "stepLabel": "Step 2 of 2 — almost done",
+    "sections": {
+      "photo": "Patient photo",
+      "personal": "Personal details",
+      "visit": "Visit details"
+    }
   },
   "opConfirmation": {
     "meta": {
@@ -328,23 +330,6 @@
     "footerNote": "Please bring this OP slip (printed or on your phone) at the time of your visit.",
     "downloadSlip": "Download OP Slip",
     "whatsappConfirmation": "WhatsApp Confirmation"
-  },
-  "enquiryForm": {
-    "fields": {
-      "name": "Name",
-      "mobile": "Mobile Number",
-      "message": "Message",
-      "callbackTime": "Preferred Callback Time",
-      "callbackPlaceholder": "e.g. Weekday evenings"
-    },
-    "submit": "Submit Enquiry",
-    "successMessage": "Enquiry submitted successfully. Our clinic team will get back to you soon.",
-    "errors": {
-      "name": "Please enter your name.",
-      "mobile": "Please enter a valid 10-digit mobile number.",
-      "message": "Please enter a short message.",
-      "generic": "Something went wrong. Please try again."
-    }
   },
   "location": {
     "meta": {
@@ -378,7 +363,7 @@
     },
     "eyebrow": "Gallery",
     "title": "A Look Inside Our Clinic",
-    "intro": "A closer look at our clinic and the care we provide. More photos, including patient smile transformations, will be added here soon.",
+    "intro": "A closer look at our clinic, our team at work, community dental camps and the smiles we've helped create.",
     "clinicEyebrow": "Our Clinic",
     "clinicTitle": "Clinic Interior",
     "doctorEyebrow": "In Practice",
@@ -392,6 +377,7 @@
     "all": "All",
     "close": "Close",
     "prev": "Previous photo",
-    "next": "Next photo"
+    "next": "Next photo",
+    "camps": "Community Camps"
   }
 }

@@ -13,7 +13,7 @@ export function Layout() {
 
   return (
     <>
-      <a href="#main-content" className="skip-link">
+      <a href="#main-content" className="skip-link" data-print-hide>
         Skip to main content
       </a>
       <Navbar />

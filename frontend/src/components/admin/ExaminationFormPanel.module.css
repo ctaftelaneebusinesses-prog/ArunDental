@@ -1,0 +1,199 @@
+.toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.toolLabel {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.lookup {
+  position: relative;
+  flex: 1 1 320px;
+  max-width: 460px;
+}
+
+.lookup input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  font-size: 0.92rem;
+}
+
+.lookup input:focus {
+  outline: none;
+  border-color: var(--color-blue-500);
+  box-shadow: 0 0 0 3px var(--color-blue-100);
+}
+
+.results {
+  position: absolute;
+  z-index: 20;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 4px 0 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.results button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.results button:hover,
+.results button:focus-visible {
+  background: var(--color-soft-blue);
+}
+
+.results strong {
+  color: var(--color-navy-900);
+  font-size: 0.92rem;
+}
+
+.results span {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.resultsError {
+  padding: 8px 12px;
+  color: var(--color-danger);
+  font-size: 0.85rem;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.tools {
+  margin-bottom: 20px;
+}
+
+.toolButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.toolBtn {
+  padding: 8px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-white);
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.toolBtn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.toolBtnActive,
+.toolBtnActive:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.photoBar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-bottom: 16px;
+}
+
+.photoHelp {
+  max-width: 520px;
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.photoActions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.photoCount {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.photoMessage {
+  margin: -6px 0 14px;
+  font-size: 0.85rem;
+  color: var(--color-warning);
+}
+
+.paper {
+  padding: 28px 16px;
+  background: #e8eef7;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+}
+
+.paper > div {
+  box-shadow: 0 12px 40px rgba(11, 58, 130, 0.14);
+}
+
+.hint {
+  margin: 14px 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* Print-only copy of the form: hidden on screen, and the only thing shown when printing. */
+.printRoot {
+  display: none;
+}
+
+@media print {
+  :global(body.exam-print-active) > :global(#root) {
+    display: none !important;
+  }
+
+  :global(body.exam-print-active) {
+    background: #ffffff;
+  }
+
+  :global(body.exam-print-active) .printRoot {
+    display: block;
+  }
+}

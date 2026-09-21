@@ -329,19 +329,27 @@
 
 .resultGrid {
   position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 48px;
+  column-count: 3;
+  column-gap: 28px;
+}
+
+@media (max-width: 1000px) {
+  .resultGrid {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 620px) {
+  .resultGrid {
+    column-count: 1;
+    max-width: 420px;
+    margin: 0 auto;
+  }
 }
 
 .resultCard {
-  width: min(100%, 360px);
-}
-
-.xrayCard {
-  width: min(100%, 300px);
+  break-inside: avoid;
+  margin-bottom: 28px;
 }
 
 .resultFrame {

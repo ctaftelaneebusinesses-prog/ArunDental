@@ -395,3 +395,10 @@ button {
 .skip-link:focus {
   left: 0;
 }
+
+/* Printing: the site chrome (navbar, footer, skip link) never belongs on paper. */
+@media print {
+  [data-print-hide] {
+    display: none !important;
+  }
+}

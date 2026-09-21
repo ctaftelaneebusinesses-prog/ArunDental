@@ -1,14 +1,14 @@
-import { apiGet, apiPatchJson, apiPostForm } from "./client";
+import { apiGet, apiPatchJson, apiPostJson } from "./client";
 import type { AppointmentStatus, AppointmentSummary, OpConfirmationResult } from "../types";
 
 export interface BookOpFormValues {
-  photo: File;
   name: string;
   mobile: string;
   address: string;
   age?: string;
   gender?: string;
   bloodGroup?: string;
+  occupation?: string;
   preferredDate?: string;
   preferredTime?: string;
   dentalProblem?: string;
@@ -17,21 +17,20 @@ export interface BookOpFormValues {
 }
 
 export function submitBookOp(values: BookOpFormValues): Promise<OpConfirmationResult> {
-  const formData = new FormData();
-  formData.append("photo", values.photo);
-  formData.append("name", values.name);
-  formData.append("mobile", values.mobile);
-  formData.append("address", values.address);
-  if (values.age) formData.append("age", values.age);
-  if (values.gender) formData.append("gender", values.gender);
-  if (values.bloodGroup) formData.append("bloodGroup", values.bloodGroup);
-  if (values.preferredDate) formData.append("preferredDate", values.preferredDate);
-  if (values.preferredTime) formData.append("preferredTime", values.preferredTime);
-  if (values.dentalProblem) formData.append("dentalProblem", values.dentalProblem);
-  if (values.previousTreatment) formData.append("previousTreatment", values.previousTreatment);
-  formData.append("consent", String(values.consent));
-
-  return apiPostForm("/appointments", formData);
+  // Optional fields left blank are simply omitted from the request.
+  return apiPostJson("/appointments", {
+    name: values.name,
+    mobile: values.mobile,
+    address: values.address,
+    age: values.age || undefined,
+    gender: values.gender || undefined,
+    bloodGroup: values.bloodGroup || undefined,
+    preferredDate: values.preferredDate || undefined,
+    preferredTime: values.preferredTime || undefined,
+    dentalProblem: values.dentalProblem || undefined,
+    previousTreatment: values.previousTreatment || undefined,
+    consent: values.consent,
+  });
 }
 
 export function fetchAppointments(filters: { date?: string; status?: string } = {}): Promise<{

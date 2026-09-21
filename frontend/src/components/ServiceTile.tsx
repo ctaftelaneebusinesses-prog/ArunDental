@@ -40,7 +40,7 @@ export function ServiceTile({ service, categorySlug, index }: ServiceTileProps) 
 
   return (
     <Link
-      to={`/contact?intent=enquiry&service=${encodeURIComponent(name)}`}
+      to="/book-op"
       className={styles.tile}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
@@ -73,7 +73,7 @@ export function ServiceTile({ service, categorySlug, index }: ServiceTileProps) 
         <h3 className={styles.name}>{name}</h3>
         <p className={styles.description}>{description}</p>
         <span className={styles.cta}>
-          {t("services.enquireAbout")}
+          {t("common.bookOp")}
           <span className={styles.arrowBtn}>
             <ArrowRightIcon width={16} height={16} />
           </span>

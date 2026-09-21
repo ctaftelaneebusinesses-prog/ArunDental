@@ -1,5 +1,4 @@
 export type AppointmentStatus = "Pending" | "Confirmed" | "Arrived" | "Completed" | "Cancelled";
-export type EnquiryStatus = "New" | "Contacted" | "FollowUp" | "Completed";
 export type Gender = "Male" | "Female" | "Other" | "Prefer not to say";
 export type BloodGroup = "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-" | "Unknown";
 
@@ -14,29 +13,20 @@ export interface AppointmentSummary {
   id: string;
   opNumber: string;
   patientId: string;
+  hasPhoto: boolean;
   patientName: string;
   mobile: string;
   address: string;
   age: number | null;
   gender: string | null;
   bloodGroup: string | null;
+  occupation: string | null;
   dentalProblem: string | null;
   previousTreatment: string | null;
   appointmentDate: string;
   appointmentTime: string | null;
   status: AppointmentStatus;
   createdAt: string;
-}
-
-export interface EnquiryRecord {
-  id: string;
-  name: string;
-  mobile: string;
-  message: string;
-  callbackTime: string | null;
-  status: EnquiryStatus;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface PatientSummary {
@@ -61,6 +51,7 @@ export interface PatientAppointmentRecord {
 
 export interface PatientDetail extends PatientSummary {
   address: string;
+  occupation: string | null;
   dentalProblem: string | null;
   previousTreatment: string | null;
   photoPath: string;
@@ -71,11 +62,8 @@ export interface DashboardSummary {
   todaysOp: number;
   upcomingAppointments: number;
   newPatients: number;
-  pendingEnquiries: number;
   pendingAppointments: number;
-  newEnquiries: number;
   totalAppointments: number;
-  totalEnquiries: number;
 }
 
 export interface OpConfirmationResult {

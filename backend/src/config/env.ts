@@ -15,4 +15,8 @@ export const env = {
   jwtSecret: required("JWT_SECRET"),
   corsOrigin: process.env.CORS_ORIGIN ?? "http://localhost:5173",
   isProduction: process.env.NODE_ENV === "production",
+  supabaseUrl: required("SUPABASE_URL"),
+  // Server-side only. Bypasses Row Level Security — never expose to the browser.
+  supabaseServiceRoleKey: required("SUPABASE_SERVICE_ROLE_KEY"),
+  supabasePhotoBucket: process.env.SUPABASE_PHOTO_BUCKET ?? "patient-photos",
 };

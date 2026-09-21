@@ -26,11 +26,11 @@ export function DoctorSection() {
             <div className={styles.offsetFrame} aria-hidden="true" />
             <div className={styles.photoFrame}>
               <img
-                src="/assets/clinic/doctor-treating-patient.webp"
+                src="/assets/photos/treating-2.webp"
                 alt={`${clinicInfo.doctorName}, ${clinicInfo.qualification}`}
                 loading="lazy"
-                width={548}
-                height={720}
+                width={1280}
+                height={905}
               />
             </div>
 
@@ -72,7 +72,7 @@ export function DoctorSection() {
 
           <div className={styles.byline}>
             <span className={styles.avatar}>
-              <img src="/assets/clinic/doctor-arun-portrait.webp" alt="" loading="lazy" />
+              <img src="/assets/photos/doctor-face.webp" alt="" loading="lazy" />
             </span>
             <span className={styles.bylineText}>
               <strong id="doctor-name" className={styles.name}>

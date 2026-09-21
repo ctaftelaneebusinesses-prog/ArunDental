@@ -15,7 +15,7 @@ import {
 import styles from "./WhyChoose.module.css";
 
 const REASONS = [
-  { key: "experience", icon: ExperienceIcon, image: "/assets/clinic/doctor-arun-portrait.webp", focus: "50% 20%" },
+  { key: "experience", icon: ExperienceIcon, image: "/assets/photos/doctor-suit.webp", focus: "50% 25%" },
   { key: "patient", icon: ChatHeartIcon, image: "/assets/clinic/doctor-treating-patient.webp", focus: "50% 35%" },
   { key: "modern", icon: ShieldCheckIcon, image: "/assets/clinic/treatment-room-wide.webp", focus: "50% 50%" },
   { key: "comfort", icon: ComfortIcon, image: "/assets/clinic/waiting-area-2.webp", focus: "50% 55%" },

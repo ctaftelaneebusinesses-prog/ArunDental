@@ -1,0 +1,116 @@
+.page {
+  margin-top: 28px;
+}
+
+.patientLine {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 28px;
+  margin: 0 0 16px;
+  font-size: 13.5px;
+  color: #0b2a6b;
+}
+
+.patientLine strong {
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #1f2a44;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 20px;
+}
+
+.figure {
+  margin: 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.frame {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 250px;
+  border: 1px solid #b7c2d6;
+  background: #f5f8fc;
+}
+
+.image {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.caption {
+  min-height: 20px;
+  margin-top: 6px;
+  font-size: 12.5px;
+  text-align: center;
+  color: #33455f;
+}
+
+.captionInput {
+  width: 100%;
+  margin-top: 6px;
+  padding: 5px 6px;
+  border: 0;
+  border-bottom: 1px solid #b7c2d6;
+  background: transparent;
+  font: inherit;
+  font-size: 12.5px;
+  text-align: center;
+  color: #0b2a6b;
+}
+
+.captionInput:focus {
+  outline: none;
+  border-bottom-color: var(--color-primary);
+  background: #f3f8ff;
+}
+
+.remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(11, 26, 60, 0.72);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.remove:hover {
+  background: var(--color-danger);
+}
+
+@media screen and (max-width: 720px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media print {
+  /* Photos always start on their own page, after the form */
+  .page {
+    margin-top: 0;
+    break-before: page;
+    page-break-before: always;
+  }
+
+  .frame {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

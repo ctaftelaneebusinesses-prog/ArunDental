@@ -1,16 +1,16 @@
-// Prisma schema for Dr. Arun Dental Care
-// Provider is SQLite for local development (zero-install).
-// For production, switch datasource.provider to "postgresql" and set
-// DATABASE_URL to a Postgres connection string — model definitions below
-// are written to be Postgres-compatible without changes.
+// Prisma schema for Dr. Arun Dental Care — Postgres on Supabase.
+// DATABASE_URL is the pooled connection (Supavisor, port 6543, ?pgbouncer=true)
+// used by the running API; DIRECT_URL is the direct/session connection
+// (port 5432) that Prisma Migrate needs.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -31,6 +31,7 @@ model Patient {
   age                 Int?
   gender              String?
   bloodGroup          String?
+  occupation          String?
   dentalProblem       String?
   previousTreatment   String?
   photoPath           String
@@ -53,19 +54,6 @@ model Appointment {
   updatedAt         DateTime @updatedAt
 
   @@index([appointmentDate])
-  @@index([status])
-}
-
-model Enquiry {
-  id            String   @id @default(uuid())
-  name          String
-  mobile        String
-  message       String
-  callbackTime  String?
-  status        String   @default("New")
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
   @@index([status])
 }
 

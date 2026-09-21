@@ -26,10 +26,10 @@ export const clinicInfo = {
   qualification: "BDS, FGD",
   location: "Kuppam, Andhra Pradesh",
 
-  addressLine1: "Old Vijayavani School Building, BSNL Office Road, Nethaji Road",
-  addressLine2: "Bairaganipalle (Rural), Andhra Pradesh 517425",
+  addressLine1: "BSNL Office Road, Nethaji Road",
+  addressLine2: "Kuppam, Andhra Pradesh 517425",
   fullAddress:
-    "Old Vijayavani School Building, BSNL Office Road, Nethaji Road, Bairaganipalle (Rural), Andhra Pradesh 517425",
+    "BSNL Office Road, Nethaji Road, Kuppam, Andhra Pradesh 517425",
 
   domain: "drarundentalcare.com",
 
@@ -38,13 +38,15 @@ export const clinicInfo = {
 
   whatsappNumber: "916302952629",
 
+  instagramUrl: "https://www.instagram.com/dr_arundentalcare_kuppam?stkn=YnV3ZDhrdHQwcHlv",
+
   // Built from the confirmed address above (no Google API key required).
   googleMapsUrl:
     "https://www.google.com/maps/search/?api=1&query=" +
-    encodeURIComponent("Dr Arun Dental Care, Old Vijayavani School Building, BSNL Office Road, Bairaganipalle, Andhra Pradesh 517425"),
+    encodeURIComponent("Dr Arun Dental Care, BSNL Office Road, Bairaganipalle, Andhra Pradesh 517425"),
   googleMapsEmbedUrl:
     "https://www.google.com/maps?q=" +
-    encodeURIComponent("Dr Arun Dental Care, Old Vijayavani School Building, BSNL Office Road, Bairaganipalle, Andhra Pradesh 517425") +
+    encodeURIComponent("Dr Arun Dental Care, BSNL Office Road, Bairaganipalle, Andhra Pradesh 517425") +
     "&output=embed",
 
   // Sourced from the clinic's public Justdial listing (Sep 2026). Review this

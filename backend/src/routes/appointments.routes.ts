@@ -1,11 +1,10 @@
-import fs from "fs";
 import { Router } from "express";
 import { prisma } from "../db/prisma";
 import { requireAuth } from "../middleware/auth.middleware";
 import { uploadPatientPhoto } from "../middleware/upload.middleware";
 import { publicFormRateLimiter } from "../middleware/rateLimit.middleware";
-import { HttpError } from "../middleware/errorHandler.middleware";
 import { generateOpNumber } from "../services/opNumber.service";
+import { deletePatientPhoto, savePatientPhoto } from "../services/storage.service";
 import {
   createAppointmentSchema,
   rescheduleAppointmentSchema,
@@ -20,13 +19,16 @@ appointmentsRouter.post(
   publicFormRateLimiter,
   uploadPatientPhoto.single("photo"),
   async (req, res, next) => {
+    let photoKey: string | undefined;
     try {
-      if (!req.file) {
-        throw new HttpError(400, "A patient photo is required.");
-      }
-
+      // Validate the form before touching storage so bad input never leaves an orphan photo.
       const data = createAppointmentSchema.parse(req.body);
 
+      // The public Book OP form no longer collects a photo. This stays optional
+      // (multipart still accepted) so a cached older page doesn't break.
+      if (req.file) {
+        photoKey = await savePatientPhoto(req.file);
+      }
       const opNumber = await generateOpNumber();
 
       const patient = await prisma.patient.create({
@@ -38,9 +40,11 @@ appointmentsRouter.post(
           age: data.age,
           gender: data.gender,
           bloodGroup: data.bloodGroup,
+          occupation: data.occupation || null,
           dentalProblem: data.dentalProblem,
           previousTreatment: data.previousTreatment,
-          photoPath: req.file.filename,
+          // Column is non-null; an empty string means "no photo" (no migration needed).
+          photoPath: photoKey ?? "",
         },
       });
 
@@ -63,8 +67,8 @@ appointmentsRouter.post(
         qualification: CLINIC.qualification,
       });
     } catch (err) {
-      if (req.file) {
-        fs.unlink(req.file.path, () => undefined);
+      if (photoKey) {
+        await deletePatientPhoto(photoKey).catch(() => undefined);
       }
       next(err);
     }
@@ -92,12 +96,14 @@ appointmentsRouter.get("/", requireAuth, async (req, res, next) => {
         id: appointment.id,
         opNumber: appointment.opNumber,
         patientId: appointment.patient.id,
+        hasPhoto: appointment.patient.photoPath !== "",
         patientName: appointment.patient.name,
         mobile: appointment.patient.mobile,
         address: appointment.patient.address,
         age: appointment.patient.age,
         gender: appointment.patient.gender,
         bloodGroup: appointment.patient.bloodGroup,
+        occupation: appointment.patient.occupation,
         dentalProblem: appointment.patient.dentalProblem,
         previousTreatment: appointment.patient.previousTreatment,
         appointmentDate: appointment.appointmentDate,

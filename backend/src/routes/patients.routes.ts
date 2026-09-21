@@ -1,9 +1,8 @@
-import path from "path";
 import { Router } from "express";
 import { prisma } from "../db/prisma";
 import { requireAuth } from "../middleware/auth.middleware";
 import { HttpError } from "../middleware/errorHandler.middleware";
-import { PATIENT_UPLOAD_DIR } from "../middleware/upload.middleware";
+import { downloadPatientPhoto } from "../services/storage.service";
 
 export const patientsRouter = Router();
 
@@ -20,8 +19,8 @@ patientsRouter.get("/", async (req, res, next) => {
           search
             ? {
                 OR: [
-                  { opNumber: { contains: search } },
-                  { name: { contains: search } },
+                  { opNumber: { contains: search, mode: "insensitive" } },
+                  { name: { contains: search, mode: "insensitive" } },
                   { mobile: { contains: search } },
                 ],
               }
@@ -76,10 +75,15 @@ patientsRouter.get("/:id/photo", async (req, res, next) => {
       throw new HttpError(404, "Patient not found.");
     }
 
-    const filePath = path.join(PATIENT_UPLOAD_DIR, patient.photoPath);
-    res.sendFile(filePath, (err) => {
-      if (err) next(new HttpError(404, "Photo not found."));
-    });
+    // Patients booked without a photo store an empty key.
+    const photo = patient.photoPath ? await downloadPatientPhoto(patient.photoPath) : null;
+    if (!photo) {
+      throw new HttpError(404, "Photo not found.");
+    }
+
+    res.setHeader("Content-Type", photo.contentType);
+    res.setHeader("Cache-Control", "private, max-age=3600");
+    res.send(photo.data);
   } catch (err) {
     next(err);
   }

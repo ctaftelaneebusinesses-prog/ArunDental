@@ -22,9 +22,6 @@ export function CtaBanner() {
               {t("common.bookOp")}
               <ArrowRightIcon width={18} height={18} />
             </Link>
-            <Link to="/contact?intent=enquiry" className="btn btn-on-dark">
-              {t("common.enquiries")}
-            </Link>
           </div>
         </div>
       </Reveal>

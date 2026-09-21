@@ -5,7 +5,7 @@ import {
   updateAppointmentStatus,
 } from "../../api/appointments";
 import { ApiError } from "../../api/client";
-import { patientPhotoUrl } from "../../api/patients";
+import { PatientAvatar } from "./PatientAvatar";
 import type { AppointmentStatus, AppointmentSummary } from "../../types";
 import { AppointmentStatusBadge } from "./StatusBadge";
 import { Modal } from "../Modal";
@@ -149,11 +149,11 @@ export function AppointmentsPanel({ refreshKey = 0 }: { refreshKey?: number }) {
                   </td>
                   <td data-label="Patient">
                     <div className={tableStyles.personCell}>
-                      <img
-                        src={patientPhotoUrl(appointment.patientId)}
-                        alt=""
-                        loading="lazy"
-                        className={tableStyles.thumb}
+                      <PatientAvatar
+                        patientId={appointment.patientId}
+                        name={appointment.patientName}
+                        hasPhoto={appointment.hasPhoto}
+                        size={42}
                       />
                       <div>
                         <div className={tableStyles.personName}>{appointment.patientName}</div>

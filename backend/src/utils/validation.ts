@@ -5,7 +5,6 @@ const mobileRegex = /^[6-9]\d{9}$/;
 export const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "Unknown"] as const;
 export const genders = ["Male", "Female", "Other", "Prefer not to say"] as const;
 export const appointmentStatuses = ["Pending", "Confirmed", "Arrived", "Completed", "Cancelled"] as const;
-export const enquiryStatuses = ["New", "Contacted", "FollowUp", "Completed"] as const;
 
 export const createAppointmentSchema = z.object({
   name: z.string().trim().min(2, "Please enter the patient's full name."),
@@ -17,6 +16,7 @@ export const createAppointmentSchema = z.object({
   age: z.coerce.number().int().min(0).max(120).optional(),
   gender: z.enum(genders).optional(),
   bloodGroup: z.enum(bloodGroups).optional(),
+  occupation: z.string().trim().max(100).optional(),
   preferredDate: z.string().optional(),
   preferredTime: z.string().optional(),
   dentalProblem: z.string().trim().max(1000).optional(),
@@ -37,17 +37,6 @@ export const updateAppointmentStatusSchema = z.object({
 export const rescheduleAppointmentSchema = z.object({
   appointmentDate: z.string().min(1, "Please choose a date."),
   appointmentTime: z.string().optional(),
-});
-
-export const createEnquirySchema = z.object({
-  name: z.string().trim().min(2, "Please enter your name."),
-  mobile: z.string().trim().regex(mobileRegex, "Please enter a valid 10-digit mobile number."),
-  message: z.string().trim().min(5, "Please enter a short message."),
-  callbackTime: z.string().trim().max(200).optional(),
-});
-
-export const updateEnquiryStatusSchema = z.object({
-  status: z.enum(enquiryStatuses),
 });
 
 export const loginSchema = z.object({

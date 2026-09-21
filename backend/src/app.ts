@@ -6,7 +6,6 @@ import cookieParser from "cookie-parser";
 import { env } from "./config/env";
 import { authRouter } from "./routes/auth.routes";
 import { appointmentsRouter } from "./routes/appointments.routes";
-import { enquiriesRouter } from "./routes/enquiries.routes";
 import { patientsRouter } from "./routes/patients.routes";
 import { dashboardRouter } from "./routes/dashboard.routes";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.middleware";
@@ -31,7 +30,6 @@ app.get("/api/health", (_req, res) => {
 
 app.use("/api/auth", authRouter);
 app.use("/api/appointments", appointmentsRouter);
-app.use("/api/enquiries", enquiriesRouter);
 app.use("/api/patients", patientsRouter);
 app.use("/api/dashboard", dashboardRouter);
 
