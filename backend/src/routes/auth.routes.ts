@@ -1,10 +1,15 @@
 import { Router } from "express";
 import { prisma } from "../db/prisma";
-import { env } from "../config/env";
 import { loginRateLimiter } from "../middleware/rateLimit.middleware";
 import { requireAuth } from "../middleware/auth.middleware";
 import { loginSchema } from "../utils/validation";
-import { AUTH_COOKIE_MAX_AGE_MS, AUTH_COOKIE_NAME, signToken, verifyPassword } from "../services/auth.service";
+import {
+  AUTH_COOKIE_MAX_AGE_MS,
+  AUTH_COOKIE_NAME,
+  AUTH_COOKIE_OPTIONS,
+  signToken,
+  verifyPassword,
+} from "../services/auth.service";
 
 export const authRouter = Router();
 
@@ -23,9 +28,7 @@ authRouter.post("/login", loginRateLimiter, async (req, res, next) => {
     const token = signToken({ userId: user.id, email: user.email, role: user.role });
 
     res.cookie(AUTH_COOKIE_NAME, token, {
-      httpOnly: true,
-      secure: env.isProduction,
-      sameSite: "lax",
+      ...AUTH_COOKIE_OPTIONS,
       maxAge: AUTH_COOKIE_MAX_AGE_MS,
     });
 
@@ -36,7 +39,7 @@ authRouter.post("/login", loginRateLimiter, async (req, res, next) => {
 });
 
 authRouter.post("/logout", (_req, res) => {
-  res.clearCookie(AUTH_COOKIE_NAME);
+  res.clearCookie(AUTH_COOKIE_NAME, AUTH_COOKIE_OPTIONS);
   res.json({ success: true });
 });
 

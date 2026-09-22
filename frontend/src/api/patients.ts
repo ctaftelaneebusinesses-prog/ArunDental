@@ -1,4 +1,4 @@
-import { apiGet } from "./client";
+import { apiGet, API_BASE } from "./client";
 import type { PatientDetail, PatientSummary } from "../types";
 
 export function searchPatients(query: { q?: string; date?: string }): Promise<{ patients: PatientSummary[] }> {
@@ -14,5 +14,5 @@ export function fetchPatient(id: string): Promise<{ patient: PatientDetail }> {
 }
 
 export function patientPhotoUrl(id: string): string {
-  return `/api/patients/${id}/photo`;
+  return `${API_BASE}/patients/${id}/photo`;
 }

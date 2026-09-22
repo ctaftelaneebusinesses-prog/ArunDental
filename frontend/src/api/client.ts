@@ -1,4 +1,8 @@
-const API_BASE = "/api";
+// In dev, Vite proxies "/api" to localhost:4000 (see vite.config.ts).
+// In production, set VITE_API_URL at build time to the backend's full URL
+// (e.g. "https://arundental-backend.up.railway.app/api") if the frontend
+// and backend are deployed on different origins.
+export const API_BASE = import.meta.env.VITE_API_URL ?? "/api";
 
 export class ApiError extends Error {
   constructor(
