@@ -6,6 +6,7 @@ import { formatDateTime, telHref, whatsappHref } from "../../utils/contactLinks"
 import { Modal } from "../Modal";
 import { PhoneIcon, WhatsAppIcon } from "../icons/DentalIcons";
 import { AppointmentStatusBadge } from "./StatusBadge";
+import { StatusSelect } from "./StatusSelect";
 import styles from "./PatientsPanel.module.css";
 
 interface Props {
@@ -15,15 +16,8 @@ interface Props {
   onStatusChange: (id: string, status: AppointmentStatus) => void;
 }
 
-const NEXT_STATUS: Partial<Record<AppointmentStatus, { to: AppointmentStatus; label: string }>> = {
-  Pending: { to: "Confirmed", label: "Confirm Appointment" },
-  Confirmed: { to: "Arrived", label: "Mark Arrived" },
-  Arrived: { to: "Completed", label: "Mark Completed" },
-};
-
 export function AppointmentDetailsModal({ appointment, busy, onClose, onStatusChange }: Props) {
   const photoUrl = patientPhotoUrl(appointment.patientId);
-  const next = NEXT_STATUS[appointment.status];
   const whatsappText = `Hello ${appointment.patientName}, this is ${clinicInfo.name} regarding your appointment (${appointment.opNumber}).`;
 
   return (
@@ -55,16 +49,12 @@ export function AppointmentDetailsModal({ appointment, busy, onClose, onStatusCh
         >
           <WhatsAppIcon width={16} height={16} /> WhatsApp
         </a>
-        {next && (
-          <button
-            type="button"
-            className="btn btn-primary btn-sm"
-            disabled={busy}
-            onClick={() => onStatusChange(appointment.id, next.to)}
-          >
-            {next.label}
-          </button>
-        )}
+        <StatusSelect
+          value={appointment.status}
+          opNumber={appointment.opNumber}
+          disabled={busy}
+          onChange={(status) => onStatusChange(appointment.id, status)}
+        />
       </div>
 
       <dl className={styles.detailGrid}>

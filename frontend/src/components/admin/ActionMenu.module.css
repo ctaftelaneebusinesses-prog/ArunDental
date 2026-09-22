@@ -1,0 +1,104 @@
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-white);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.trigger:hover {
+  background: var(--color-pale-blue);
+  border-color: var(--color-accent-glow);
+  color: var(--color-primary);
+}
+
+.trigger[aria-expanded="true"] {
+  background: var(--color-soft-blue);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.trigger:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.menu {
+  position: fixed;
+  z-index: 400;
+  width: 200px;
+  padding: 6px;
+  border-radius: 14px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 24px 44px -18px rgba(11, 58, 130, 0.45);
+  animation: menuIn 140ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.item svg {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+
+.item:hover:not(:disabled) {
+  background: var(--color-pale-blue);
+}
+
+.item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.itemDanger {
+  color: var(--color-danger);
+}
+
+.itemDanger svg {
+  color: var(--color-danger);
+}
+
+.itemDanger:hover:not(:disabled) {
+  background: var(--color-danger-bg);
+}
+
+@keyframes menuIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu {
+    animation: none;
+  }
+}

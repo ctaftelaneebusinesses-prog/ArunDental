@@ -88,11 +88,12 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #fff;
-  box-shadow: 0 16px 30px -10px rgba(2, 12, 34, 0.7);
+  box-shadow: 0 0 0 1px var(--color-border), 0 16px 30px -10px rgba(2, 12, 34, 0.7);
 }
 
 .logo img {

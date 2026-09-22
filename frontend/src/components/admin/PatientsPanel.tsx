@@ -1,10 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
-import { fetchPatient, searchPatients } from "../../api/patients";
+import { deletePatient, exportPatients, fetchPatient, searchPatients } from "../../api/patients";
 import { ApiError } from "../../api/client";
+import { downloadCsv } from "../../utils/exportCsv";
 import type { PatientDetail, PatientSummary } from "../../types";
 import { Modal } from "../Modal";
 import { AppointmentStatusBadge } from "./StatusBadge";
 import { PatientAvatar } from "./PatientAvatar";
+import { ActionMenu, type ActionMenuItem } from "./ActionMenu";
+import { CancelXIcon, EyeIcon } from "./AdminIcons";
+import { UploadIcon } from "../icons/DentalIcons";
 import tableStyles from "./AdminTable.module.css";
 import styles from "./PatientsPanel.module.css";
 
@@ -17,6 +21,9 @@ export function PatientsPanel() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedPatient, setSelectedPatient] = useState<PatientDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   const load = useCallback(async () => {
     setIsLoading(true);
@@ -48,6 +55,68 @@ export function PatientsPanel() {
       .finally(() => setDetailLoading(false));
   }, [selectedId]);
 
+  async function handleDelete(patient: PatientSummary) {
+    if (
+      !window.confirm(
+        `Permanently delete ${patient.name} (${patient.opNumber}) and all of their appointment history? This cannot be undone.`
+      )
+    ) {
+      return;
+    }
+    setDeletingId(patient.id);
+    setActionError(null);
+    try {
+      await deletePatient(patient.id);
+      setPatients((current) => current.filter((p) => p.id !== patient.id));
+      if (selectedId === patient.id) setSelectedId(null);
+    } catch (err) {
+      setActionError(err instanceof ApiError ? err.message : "Failed to delete patient.");
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
+  async function handleExport() {
+    setIsExporting(true);
+    setActionError(null);
+    try {
+      const res = await exportPatients();
+      const header = [
+        "OP Number",
+        "Name",
+        "Mobile",
+        "Status",
+        "Age",
+        "Gender",
+        "Blood Group",
+        "Occupation",
+        "Address",
+        "Dental Problem",
+        "Previous Treatment",
+        "Registered On",
+      ];
+      const rows = res.patients.map((p) => [
+        p.opNumber,
+        p.name,
+        p.mobile,
+        p.status ?? "—",
+        p.age,
+        p.gender,
+        p.bloodGroup,
+        p.occupation,
+        p.address,
+        p.dentalProblem,
+        p.previousTreatment,
+        new Date(p.createdAt).toLocaleDateString("en-IN"),
+      ]);
+      downloadCsv(`patients-${new Date().toISOString().slice(0, 10)}.csv`, [header, ...rows]);
+    } catch (err) {
+      setActionError(err instanceof ApiError ? err.message : "Failed to export patients.");
+    } finally {
+      setIsExporting(false);
+    }
+  }
+
   return (
     <div>
       <div className={tableStyles.toolbar}>
@@ -77,7 +146,22 @@ export function PatientsPanel() {
             Clear Filters
           </button>
         )}
+        <button
+          type="button"
+          className={`btn btn-primary btn-sm ${tableStyles.toolbarAction}`}
+          disabled={isExporting}
+          onClick={handleExport}
+        >
+          <UploadIcon width={16} height={16} style={{ transform: "rotate(180deg)" }} />
+          {isExporting ? "Preparing…" : "Download Excel Sheet"}
+        </button>
       </div>
+
+      {actionError && (
+        <div className="alert alert-error" role="alert">
+          {actionError}
+        </div>
+      )}
 
       <div className={tableStyles.tableWrap}>
         {isLoading ? (
@@ -109,9 +193,32 @@ export function PatientsPanel() {
                   <td data-label="Gender">{patient.gender ?? "—"}</td>
                   <td data-label="Registered">{new Date(patient.createdAt).toLocaleDateString("en-IN")}</td>
                   <td data-label="Actions">
-                    <button type="button" className="btn btn-secondary btn-sm" onClick={() => setSelectedId(patient.id)}>
-                      View Profile
-                    </button>
+                    <div className={tableStyles.actionsRow}>
+                      <button
+                        type="button"
+                        className={tableStyles.iconBtn}
+                        title="View profile"
+                        aria-label={`View profile for ${patient.name}`}
+                        onClick={() => setSelectedId(patient.id)}
+                      >
+                        <EyeIcon width={17} height={17} />
+                      </button>
+                      <ActionMenu
+                        label={`More actions for ${patient.name}`}
+                        items={
+                          [
+                            {
+                              key: "delete",
+                              label: "Delete Patient",
+                              icon: <CancelXIcon width={16} height={16} />,
+                              danger: true,
+                              disabled: deletingId === patient.id,
+                              onClick: () => handleDelete(patient),
+                            },
+                          ] as ActionMenuItem[]
+                        }
+                      />
+                    </div>
                   </td>
                 </tr>
               ))}

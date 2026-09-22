@@ -98,10 +98,37 @@
   overflow: hidden;
 }
 
-.actionsCell {
+.actionsRow {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-white);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.iconBtn:hover {
+  background: var(--color-pale-blue);
+  border-color: var(--color-accent-glow);
+  color: var(--color-primary);
+}
+
+.iconBtn:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .emptyState {
@@ -122,6 +149,13 @@
   flex-wrap: wrap;
   margin-bottom: 20px;
   align-items: flex-end;
+}
+
+.toolbarAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
 }
 
 .toolbarField {
@@ -184,7 +218,7 @@
     text-align: left;
   }
 
-  .actionsCell {
+  .actionsRow {
     justify-content: flex-end;
   }
 

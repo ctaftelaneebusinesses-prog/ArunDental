@@ -33,8 +33,11 @@ export const clinicInfo = {
 
   domain: "drarundentalcare.com",
 
-  phoneDisplay: "+91 63029 52629",
-  phoneHref: "tel:+916302952629",
+  // Landline for "Call Clinic" — deliberately different from the WhatsApp
+  // number below. Confirmed by the client Sep 2026; do not merge these back
+  // into one number.
+  phoneDisplay: "08570-255477",
+  phoneHref: "tel:+918570255477",
 
   whatsappNumber: "916302952629",
 

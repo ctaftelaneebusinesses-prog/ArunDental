@@ -2,11 +2,42 @@ import { Router } from "express";
 import { prisma } from "../db/prisma";
 import { requireAuth } from "../middleware/auth.middleware";
 import { HttpError } from "../middleware/errorHandler.middleware";
-import { downloadPatientPhoto } from "../services/storage.service";
+import { downloadPatientPhoto, deletePatientPhoto } from "../services/storage.service";
 
 export const patientsRouter = Router();
 
 patientsRouter.use(requireAuth);
+
+// Registered before the "/:id" route below — Express matches routes in order,
+// so "/export" would otherwise be swallowed as an :id value of "export".
+patientsRouter.get("/export", async (_req, res, next) => {
+  try {
+    const patients = await prisma.patient.findMany({
+      orderBy: { createdAt: "desc" },
+      // Only the most recent appointment — a patient can have several over
+      // time, and the sheet shows one status per row.
+      include: { appointments: { orderBy: { createdAt: "desc" }, take: 1 } },
+    });
+    res.json({
+      patients: patients.map((patient) => ({
+        opNumber: patient.opNumber,
+        name: patient.name,
+        mobile: patient.mobile,
+        age: patient.age,
+        gender: patient.gender,
+        bloodGroup: patient.bloodGroup,
+        occupation: patient.occupation,
+        address: patient.address,
+        dentalProblem: patient.dentalProblem,
+        previousTreatment: patient.previousTreatment,
+        status: patient.appointments[0]?.status ?? null,
+        createdAt: patient.createdAt,
+      })),
+    });
+  } catch (err) {
+    next(err);
+  }
+});
 
 patientsRouter.get("/", async (req, res, next) => {
   try {
@@ -84,6 +115,31 @@ patientsRouter.get("/:id/photo", async (req, res, next) => {
     res.setHeader("Content-Type", photo.contentType);
     res.setHeader("Cache-Control", "private, max-age=3600");
     res.send(photo.data);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Permanently removes a patient and every appointment booked under them —
+// requested by the clinic for records that were entered by mistake or that a
+// patient has asked to have removed. There is no undo.
+patientsRouter.delete("/:id", async (req, res, next) => {
+  try {
+    const patient = await prisma.patient.findUnique({ where: { id: req.params.id } });
+    if (!patient) {
+      throw new HttpError(404, "Patient not found.");
+    }
+
+    await prisma.$transaction([
+      prisma.appointment.deleteMany({ where: { patientId: patient.id } }),
+      prisma.patient.delete({ where: { id: patient.id } }),
+    ]);
+
+    if (patient.photoPath) {
+      await deletePatientPhoto(patient.photoPath).catch(() => undefined);
+    }
+
+    res.json({ success: true });
   } catch (err) {
     next(err);
   }

@@ -8,15 +8,25 @@ import { ApiError } from "../../api/client";
 import { PatientAvatar } from "./PatientAvatar";
 import type { AppointmentStatus, AppointmentSummary } from "../../types";
 import { AppointmentStatusBadge } from "./StatusBadge";
+import { StatusSelect } from "./StatusSelect";
 import { Modal } from "../Modal";
 import { AppointmentDetailsModal } from "./AppointmentDetailsModal";
+import { EyeIcon } from "./AdminIcons";
+import { ClockIcon, ToothIcon } from "../icons/DentalIcons";
 import tableStyles from "./AdminTable.module.css";
 
 const STATUS_OPTIONS: AppointmentStatus[] = ["Pending", "Confirmed", "Arrived", "Completed", "Cancelled"];
 
+interface AppointmentsPanelProps {
+  refreshKey?: number;
+  // Jumps to the Examination Form tab pre-filled for this patient — wired up
+  // by the dashboard, which owns the tab state.
+  onExamine?: (patientId: string) => void;
+}
+
 // `refreshKey` is bumped by the dashboard when it notices a new booking, so the
 // list updates itself without the admin having to reload the page.
-export function AppointmentsPanel({ refreshKey = 0 }: { refreshKey?: number }) {
+export function AppointmentsPanel({ refreshKey = 0, onExamine }: AppointmentsPanelProps) {
   const [appointments, setAppointments] = useState<AppointmentSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -179,65 +189,45 @@ export function AppointmentsPanel({ refreshKey = 0 }: { refreshKey?: number }) {
                     <AppointmentStatusBadge status={appointment.status} />
                   </td>
                   <td data-label="Actions">
-                    <div className={tableStyles.actionsCell}>
+                    <div className={tableStyles.actionsRow}>
+                      <StatusSelect
+                        value={appointment.status}
+                        opNumber={appointment.opNumber}
+                        disabled={busyId === appointment.id}
+                        onChange={(status) => handleStatusChange(appointment.id, status)}
+                      />
+
                       <button
                         type="button"
-                        className="btn btn-secondary btn-sm"
+                        className={tableStyles.iconBtn}
+                        title="View details"
+                        aria-label={`View details for ${appointment.opNumber}`}
                         onClick={() => setViewing(appointment)}
                       >
-                        View Details
+                        <EyeIcon width={17} height={17} />
                       </button>
-                      {appointment.status === "Pending" && (
+
+                      {onExamine && (
                         <button
                           type="button"
-                          className="btn btn-primary btn-sm"
-                          disabled={busyId === appointment.id}
-                          onClick={() => handleStatusChange(appointment.id, "Confirmed")}
+                          className={tableStyles.iconBtn}
+                          title="Open Examination Form for this patient"
+                          aria-label={`Open Examination Form for ${appointment.patientName}`}
+                          onClick={() => onExamine(appointment.patientId)}
                         >
-                          Confirm
+                          <ToothIcon width={17} height={17} />
                         </button>
                       )}
-                      {appointment.status === "Confirmed" && (
-                        <button
-                          type="button"
-                          className="btn btn-primary btn-sm"
-                          disabled={busyId === appointment.id}
-                          onClick={() => handleStatusChange(appointment.id, "Arrived")}
-                        >
-                          Mark Arrived
-                        </button>
-                      )}
-                      {appointment.status === "Arrived" && (
-                        <button
-                          type="button"
-                          className="btn btn-primary btn-sm"
-                          disabled={busyId === appointment.id}
-                          onClick={() => handleStatusChange(appointment.id, "Completed")}
-                        >
-                          Mark Completed
-                        </button>
-                      )}
+
                       {(appointment.status === "Pending" || appointment.status === "Confirmed") && (
                         <button
                           type="button"
-                          className="btn btn-secondary btn-sm"
+                          className={tableStyles.iconBtn}
+                          title="Reschedule"
+                          aria-label={`Reschedule ${appointment.opNumber}`}
                           onClick={() => setRescheduling(appointment)}
                         >
-                          Reschedule
-                        </button>
-                      )}
-                      {appointment.status !== "Cancelled" && appointment.status !== "Completed" && (
-                        <button
-                          type="button"
-                          className="btn btn-secondary btn-sm"
-                          disabled={busyId === appointment.id}
-                          onClick={() => {
-                            if (window.confirm(`Cancel appointment ${appointment.opNumber}?`)) {
-                              handleStatusChange(appointment.id, "Cancelled");
-                            }
-                          }}
-                        >
-                          Cancel
+                          <ClockIcon width={17} height={17} />
                         </button>
                       )}
                     </div>

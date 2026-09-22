@@ -53,3 +53,7 @@ export function apiPatchJson<T>(path: string, data: unknown): Promise<T> {
 export function apiPostForm<T>(path: string, formData: FormData): Promise<T> {
   return request<T>(path, { method: "POST", body: formData });
 }
+
+export function apiDelete<T>(path: string): Promise<T> {
+  return request<T>(path, { method: "DELETE" });
+}

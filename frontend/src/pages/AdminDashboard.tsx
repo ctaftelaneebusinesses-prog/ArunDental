@@ -53,6 +53,14 @@ export default function AdminDashboard() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
   const [appointmentsRefresh, setAppointmentsRefresh] = useState(0);
+  // Set when "Examination Form" is clicked on a specific appointment; tells the
+  // Examination Form tab which patient to load. `ts` forces the load effect to
+  // re-run even if the same patient is opened twice in a row.
+  const [examRequest, setExamRequest] = useState<{ id: string; ts: number } | null>(null);
+  const handleExamine = useCallback((patientId: string) => {
+    setExamRequest({ id: patientId, ts: Date.now() });
+    setTab("examination");
+  }, []);
   // Totals from the previous poll; null until the first poll so opening the
   // dashboard never announces old records as "new".
   const lastTotals = useRef<{ appointments: number } | null>(null);
@@ -238,7 +246,7 @@ export default function AdminDashboard() {
                   />
                 </div>
                 <h2 className={styles.sectionTitle}>Appointments</h2>
-                <AppointmentsPanel refreshKey={appointmentsRefresh} />
+                <AppointmentsPanel refreshKey={appointmentsRefresh} onExamine={handleExamine} />
               </div>
             )}
 
@@ -252,7 +260,7 @@ export default function AdminDashboard() {
             {tab === "examination" && (
               <div className={styles.panelSection}>
                 <h2 className={styles.sectionTitle}>Dental Examination Form</h2>
-                <ExaminationFormPanel />
+                <ExaminationFormPanel examRequest={examRequest} />
               </div>
             )}
           </div>

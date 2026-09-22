@@ -36,7 +36,13 @@ const TOOLS: { key: Tool; label: string }[] = [
   { key: "erase", label: "Erase" },
 ];
 
-export function ExaminationFormPanel() {
+interface ExaminationFormPanelProps {
+  // Set from the Appointments tab's "Examination Form" action so this patient's
+  // details load automatically without the admin having to search for them.
+  examRequest?: { id: string; ts: number } | null;
+}
+
+export function ExaminationFormPanel({ examRequest }: ExaminationFormPanelProps = {}) {
   const [values, setValues] = useState<ExamValues>(() => loadDraft() ?? createEmptyExam());
   const [tool, setTool] = useState<Tool>("caries");
   const [query, setQuery] = useState("");
@@ -121,10 +127,10 @@ export function ExaminationFormPanel() {
     [tool],
   );
 
-  async function loadPatient(summary: PatientSummary) {
+  const loadPatientById = useCallback(async (id: string) => {
     setLookupError(null);
     try {
-      const { patient } = await fetchPatient(summary.id);
+      const { patient } = await fetchPatient(id);
       setValues((current) => ({
         ...current,
         opNumber: patient.opNumber,
@@ -141,7 +147,16 @@ export function ExaminationFormPanel() {
     } catch {
       setLookupError("Could not load that patient. Please try again.");
     }
-  }
+  }, []);
+
+  // Jumped here from the Appointments tab's "Examination Form" action — load
+  // that patient right away. `ts` (not just the id) is the dependency so
+  // clicking the same patient's action again re-triggers this even though the
+  // id hasn't changed.
+  useEffect(() => {
+    if (examRequest) void loadPatientById(examRequest.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [examRequest?.id, examRequest?.ts]);
 
   async function addPhotoFiles(files: File[]) {
     setPhotoMessage(null);
@@ -201,7 +216,7 @@ export function ExaminationFormPanel() {
               {lookupError && <li className={styles.resultsError}>{lookupError}</li>}
               {results.map((patient) => (
                 <li key={patient.id}>
-                  <button type="button" onClick={() => loadPatient(patient)}>
+                  <button type="button" onClick={() => loadPatientById(patient.id)}>
                     <strong>{patient.name}</strong>
                     <span>
                       {patient.opNumber} · {patient.mobile}
