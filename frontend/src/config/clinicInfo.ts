@@ -11,12 +11,12 @@ export interface DayHours {
 
 // Monday-first order, matching Date#getDay() rotated (0 = Sunday in JS).
 export const clinicHoursSchedule: DayHours[] = [
-  { day: "Monday", open: "09:00", close: "21:00" },
-  { day: "Tuesday", open: "09:00", close: "21:00" },
-  { day: "Wednesday", open: "09:00", close: "21:00" },
-  { day: "Thursday", open: "09:00", close: "21:00" },
-  { day: "Friday", open: "09:00", close: "21:00" },
-  { day: "Saturday", open: "09:00", close: "21:00" },
+  { day: "Monday", open: "09:00", close: "20:00" },
+  { day: "Tuesday", open: "09:00", close: "20:00" },
+  { day: "Wednesday", open: "09:00", close: "20:00" },
+  { day: "Thursday", open: "09:00", close: "20:00" },
+  { day: "Friday", open: "09:00", close: "20:00" },
+  { day: "Saturday", open: "09:00", close: "20:00" },
   { day: "Sunday", open: "09:00", close: "13:00" },
 ];
 
