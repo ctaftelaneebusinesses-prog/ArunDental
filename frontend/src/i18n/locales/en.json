@@ -305,6 +305,7 @@
       "address": "Please enter a complete address.",
       "photo": "Please upload or capture a patient photo.",
       "age": "Please enter a valid age.",
+      "occupation": "Please select an occupation.",
       "consent": "Please confirm the consent statement to proceed.",
       "generic": "Something went wrong. Please try again."
     },

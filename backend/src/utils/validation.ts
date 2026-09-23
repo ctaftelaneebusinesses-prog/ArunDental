@@ -16,7 +16,7 @@ export const createAppointmentSchema = z.object({
   age: z.coerce.number().int().min(0).max(120).optional(),
   gender: z.enum(genders).optional(),
   bloodGroup: z.enum(bloodGroups).optional(),
-  occupation: z.string().trim().max(100).optional(),
+  occupation: z.string().trim().min(1, "Please select an occupation.").max(100),
   preferredDate: z.string().optional(),
   preferredTime: z.string().optional(),
   dentalProblem: z.string().trim().max(1000).optional(),

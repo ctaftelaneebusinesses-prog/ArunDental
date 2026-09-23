@@ -88,6 +88,11 @@ export default function BookOP() {
     if (!MOBILE_REGEX.test(values.mobile.trim())) next.mobile = t("bookOp.errors.mobile");
     if (values.address.trim().length < 5) next.address = t("bookOp.errors.address");
     if (values.age && (Number(values.age) < 0 || Number(values.age) > 120)) next.age = t("bookOp.errors.age");
+    if (!values.occupation) {
+      next.occupation = t("bookOp.errors.occupation");
+    } else if (values.occupation === OTHER_OCCUPATION && !otherOccupation.trim()) {
+      next.occupation = t("bookOp.errors.occupation");
+    }
     if (!values.consent) next.consent = t("bookOp.errors.consent");
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -107,10 +112,7 @@ export default function BookOP() {
         age: values.age || undefined,
         gender: values.gender || undefined,
         bloodGroup: values.bloodGroup || undefined,
-        occupation:
-          values.occupation === OTHER_OCCUPATION
-            ? otherOccupation.trim() || OTHER_OCCUPATION
-            : values.occupation || undefined,
+        occupation: values.occupation === OTHER_OCCUPATION ? otherOccupation.trim() : values.occupation,
         preferredDate: values.preferredDate || undefined,
         dentalProblem: values.dentalProblem.trim() || undefined,
         previousTreatment: values.previousTreatment.trim() || undefined,
@@ -304,7 +306,9 @@ export default function BookOP() {
               </div>
 
               <div className="field">
-                <label htmlFor="occupation">{t("bookOp.fields.occupation")}</label>
+                <label htmlFor="occupation">
+                  {t("bookOp.fields.occupation")} <span className="required">*</span>
+                </label>
                 <select
                   id="occupation"
                   value={values.occupation}
@@ -312,6 +316,8 @@ export default function BookOP() {
                     update("occupation", e.target.value);
                     if (e.target.value !== OTHER_OCCUPATION) setOtherOccupation("");
                   }}
+                  className={errors.occupation ? "has-error" : ""}
+                  aria-invalid={Boolean(errors.occupation)}
                 >
                   <option value="">{t("bookOp.fields.selectOccupation")}</option>
                   {OCCUPATIONS.map((item) => (
@@ -330,8 +336,11 @@ export default function BookOP() {
                     aria-label={t("bookOp.fields.occupationOther")}
                     value={otherOccupation}
                     onChange={(e) => setOtherOccupation(e.target.value)}
+                    className={errors.occupation ? "has-error" : ""}
+                    aria-invalid={Boolean(errors.occupation)}
                   />
                 )}
+                {errors.occupation && <p className="field-error">{errors.occupation}</p>}
               </div>
 
               <div className="field">

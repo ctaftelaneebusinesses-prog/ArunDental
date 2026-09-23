@@ -345,6 +345,22 @@
   }
 }
 
+@media (max-width: 420px) {
+  /* Long translated labels (Telugu/Tamil/Kannada) don't fit the pill on one
+     line at this width — stack instead of wrapping mid-word in two columns. */
+  .status {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    width: fit-content;
+  }
+
+  .statusHours {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
 @media (max-width: 560px) {
   .bookCard {
     padding: 28px 22px 26px;
@@ -460,13 +476,18 @@
 
 .cardActions {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-top: auto;
 }
 
 .cardActions .cardButton {
-  flex: 1;
+  flex: 1 1 140px;
+  min-width: 140px;
   padding: 12px 10px;
+  white-space: normal;
+  line-height: 1.3;
+  text-align: center;
 }
 
 .cardButton {
