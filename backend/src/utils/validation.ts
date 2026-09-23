@@ -5,6 +5,7 @@ const mobileRegex = /^[6-9]\d{9}$/;
 export const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "Unknown"] as const;
 export const genders = ["Male", "Female", "Other", "Prefer not to say"] as const;
 export const appointmentStatuses = ["Pending", "Confirmed", "Arrived", "Completed", "Cancelled"] as const;
+export const paymentStatuses = ["Payment Pending", "Payment Completed"] as const;
 
 export const createAppointmentSchema = z.object({
   name: z.string().trim().min(2, "Please enter the patient's full name."),
@@ -32,6 +33,14 @@ export const createAppointmentSchema = z.object({
 
 export const updateAppointmentStatusSchema = z.object({
   status: z.enum(appointmentStatuses),
+});
+
+export const updateAppointmentSittingSchema = z.object({
+  sittingCount: z.coerce.number().int().min(1, "Sitting count can't go below 1.").max(50),
+});
+
+export const updateAppointmentPaymentStatusSchema = z.object({
+  paymentStatus: z.enum(paymentStatuses),
 });
 
 export const rescheduleAppointmentSchema = z.object({

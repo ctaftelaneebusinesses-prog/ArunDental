@@ -1,5 +1,5 @@
 import { apiGet, apiPatchJson, apiPostJson } from "./client";
-import type { AppointmentStatus, AppointmentSummary, OpConfirmationResult } from "../types";
+import type { AppointmentStatus, AppointmentSummary, OpConfirmationResult, PaymentStatus } from "../types";
 
 export interface BookOpFormValues {
   name: string;
@@ -50,4 +50,12 @@ export function updateAppointmentStatus(id: string, status: AppointmentStatus) {
 
 export function rescheduleAppointment(id: string, appointmentDate: string, appointmentTime?: string) {
   return apiPatchJson(`/appointments/${id}/reschedule`, { appointmentDate, appointmentTime });
+}
+
+export function updateAppointmentSitting(id: string, sittingCount: number) {
+  return apiPatchJson(`/appointments/${id}/sitting`, { sittingCount });
+}
+
+export function updateAppointmentPaymentStatus(id: string, paymentStatus: PaymentStatus) {
+  return apiPatchJson(`/appointments/${id}/payment-status`, { paymentStatus });
 }

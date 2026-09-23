@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { PageMeta } from "../components/PageMeta";
 import { useAuth } from "../context/AuthContext";
 import { fetchDashboardSummary } from "../api/dashboard";
@@ -49,7 +49,28 @@ function greeting(): string {
 export default function AdminDashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<Tab>("overview");
+  // The open tab lives in the URL (?tab=...). Leaving the dashboard home pushes
+  // one history entry and hopping between other tabs replaces it, so the phone's
+  // back button always returns to the dashboard home instead of leaving the site.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const cameFromHome = Boolean((location.state as { fromHome?: boolean } | null)?.fromHome);
+  const tabParam = searchParams.get("tab");
+  const tab: Tab = TABS.some((t) => t.key === tabParam) ? (tabParam as Tab) : "overview";
+  const setTab = useCallback(
+    (next: Tab) => {
+      if (next === tab) return;
+      if (next === "overview") {
+        // Pop back to the home entry rather than stacking a new one.
+        if (cameFromHome) navigate(-1);
+        else setSearchParams({}, { replace: true });
+      } else {
+        setSearchParams({ tab: next }, { replace: tab !== "overview", state: { fromHome: tab === "overview" || cameFromHome } });
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [tab, cameFromHome, navigate, setSearchParams],
+  );
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
   const [appointmentsRefresh, setAppointmentsRefresh] = useState(0);
@@ -60,7 +81,7 @@ export default function AdminDashboard() {
   const handleExamine = useCallback((patientId: string) => {
     setExamRequest({ id: patientId, ts: Date.now() });
     setTab("examination");
-  }, []);
+  }, [setTab]);
   // Totals from the previous poll; null until the first poll so opening the
   // dashboard never announces old records as "new".
   const lastTotals = useRef<{ appointments: number } | null>(null);

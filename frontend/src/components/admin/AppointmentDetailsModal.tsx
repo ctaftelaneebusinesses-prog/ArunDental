@@ -90,6 +90,14 @@ export function AppointmentDetailsModal({ appointment, busy, onClose, onStatusCh
           <dt>Occupation</dt>
           <dd>{appointment.occupation || "Not specified"}</dd>
         </div>
+        <div>
+          <dt>Sitting</dt>
+          <dd>{appointment.sittingCount}</dd>
+        </div>
+        <div>
+          <dt>Fees</dt>
+          <dd>{appointment.paymentStatus}</dd>
+        </div>
         <div className={styles.fullWidth}>
           <dt>Address</dt>
           <dd>{appointment.address}</dd>

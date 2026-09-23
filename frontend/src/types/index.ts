@@ -1,4 +1,5 @@
 export type AppointmentStatus = "Pending" | "Confirmed" | "Arrived" | "Completed" | "Cancelled";
+export type PaymentStatus = "Payment Pending" | "Payment Completed";
 export type Gender = "Male" | "Female" | "Other" | "Prefer not to say";
 export type BloodGroup = "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-" | "Unknown";
 
@@ -26,6 +27,8 @@ export interface AppointmentSummary {
   appointmentDate: string;
   appointmentTime: string | null;
   status: AppointmentStatus;
+  sittingCount: number;
+  paymentStatus: PaymentStatus;
   createdAt: string;
 }
 

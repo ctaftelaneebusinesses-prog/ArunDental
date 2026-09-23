@@ -305,6 +305,15 @@ export function ExaminationFormPanel({ examRequest }: ExaminationFormPanelProps 
         )}
       </div>
 
+      <div className={`${styles.actions} ${styles.actionsBottom}`}>
+        <button type="button" className="btn btn-secondary btn-sm" onClick={handleClear}>
+          New / Clear
+        </button>
+        <button type="button" className="btn btn-primary btn-sm" onClick={() => window.print()}>
+          Print Form
+        </button>
+      </div>
+
       <p className={styles.hint}>
         {savedAt
           ? `Draft saved on this computer at ${savedAt.toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" })}.`

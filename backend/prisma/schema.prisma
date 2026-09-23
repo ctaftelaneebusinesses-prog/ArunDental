@@ -50,6 +50,12 @@ model Appointment {
   appointmentDate   String
   appointmentTime   String?
   status            String   @default("Pending")
+  // Number of treatment sittings/visits this OP has had so far (e.g. root
+  // canal spans multiple sittings) — steppable from the admin dashboard.
+  sittingCount      Int      @default(1)
+  // "Payment Pending" | "Payment Completed" — kept as a free string (like
+  // `status`) rather than a Prisma enum, matching this schema's existing style.
+  paymentStatus     String   @default("Payment Pending")
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 

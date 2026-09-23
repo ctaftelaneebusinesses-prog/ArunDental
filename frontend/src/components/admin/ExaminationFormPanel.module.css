@@ -92,6 +92,11 @@
   gap: 10px;
 }
 
+.actionsBottom {
+  justify-content: flex-end;
+  margin: 20px 0;
+}
+
 .tools {
   margin-bottom: 20px;
 }

@@ -2,13 +2,17 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 import {
   fetchAppointments,
   rescheduleAppointment,
+  updateAppointmentPaymentStatus,
+  updateAppointmentSitting,
   updateAppointmentStatus,
 } from "../../api/appointments";
 import { ApiError } from "../../api/client";
 import { PatientAvatar } from "./PatientAvatar";
-import type { AppointmentStatus, AppointmentSummary } from "../../types";
+import type { AppointmentStatus, AppointmentSummary, PaymentStatus } from "../../types";
 import { AppointmentStatusBadge } from "./StatusBadge";
 import { StatusSelect } from "./StatusSelect";
+import { SittingStepper } from "./SittingStepper";
+import { PaymentStatusSelect } from "./PaymentStatusSelect";
 import { Modal } from "../Modal";
 import { AppointmentDetailsModal } from "./AppointmentDetailsModal";
 import { EyeIcon } from "./AdminIcons";
@@ -66,6 +70,32 @@ export function AppointmentsPanel({ refreshKey = 0, onExamine }: AppointmentsPan
       await load();
     } catch (err) {
       setActionError(err instanceof ApiError ? err.message : "Failed to update appointment.");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function handleSittingChange(id: string, sittingCount: number) {
+    setBusyId(id);
+    setActionError(null);
+    try {
+      await updateAppointmentSitting(id, sittingCount);
+      await load(true);
+    } catch (err) {
+      setActionError(err instanceof ApiError ? err.message : "Failed to update sitting count.");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function handlePaymentStatusChange(id: string, paymentStatus: PaymentStatus) {
+    setBusyId(id);
+    setActionError(null);
+    try {
+      await updateAppointmentPaymentStatus(id, paymentStatus);
+      await load(true);
+    } catch (err) {
+      setActionError(err instanceof ApiError ? err.message : "Failed to update payment status.");
     } finally {
       setBusyId(null);
     }
@@ -147,6 +177,8 @@ export function AppointmentsPanel({ refreshKey = 0, onExamine }: AppointmentsPan
                 <th>Dental Problem</th>
                 <th>Date &amp; Time</th>
                 <th>Status</th>
+                <th>Sitting</th>
+                <th>Fees</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -187,6 +219,22 @@ export function AppointmentsPanel({ refreshKey = 0, onExamine }: AppointmentsPan
                   </td>
                   <td data-label="Status">
                     <AppointmentStatusBadge status={appointment.status} />
+                  </td>
+                  <td data-label="Sitting">
+                    <SittingStepper
+                      value={appointment.sittingCount}
+                      opNumber={appointment.opNumber}
+                      disabled={busyId === appointment.id}
+                      onChange={(count) => handleSittingChange(appointment.id, count)}
+                    />
+                  </td>
+                  <td data-label="Fees">
+                    <PaymentStatusSelect
+                      value={appointment.paymentStatus}
+                      opNumber={appointment.opNumber}
+                      disabled={busyId === appointment.id}
+                      onChange={(status) => handlePaymentStatusChange(appointment.id, status)}
+                    />
                   </td>
                   <td data-label="Actions">
                     <div className={tableStyles.actionsRow}>

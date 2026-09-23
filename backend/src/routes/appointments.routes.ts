@@ -8,6 +8,8 @@ import { deletePatientPhoto, savePatientPhoto } from "../services/storage.servic
 import {
   createAppointmentSchema,
   rescheduleAppointmentSchema,
+  updateAppointmentPaymentStatusSchema,
+  updateAppointmentSittingSchema,
   updateAppointmentStatusSchema,
 } from "../utils/validation";
 import { CLINIC } from "../config/clinic";
@@ -109,6 +111,8 @@ appointmentsRouter.get("/", requireAuth, async (req, res, next) => {
         appointmentDate: appointment.appointmentDate,
         appointmentTime: appointment.appointmentTime,
         status: appointment.status,
+        sittingCount: appointment.sittingCount,
+        paymentStatus: appointment.paymentStatus,
         createdAt: appointment.createdAt,
       })),
     });
@@ -123,6 +127,32 @@ appointmentsRouter.patch("/:id/status", requireAuth, async (req, res, next) => {
     const appointment = await prisma.appointment.update({
       where: { id: req.params.id },
       data: { status },
+    });
+    res.json({ appointment });
+  } catch (err) {
+    next(err);
+  }
+});
+
+appointmentsRouter.patch("/:id/sitting", requireAuth, async (req, res, next) => {
+  try {
+    const { sittingCount } = updateAppointmentSittingSchema.parse(req.body);
+    const appointment = await prisma.appointment.update({
+      where: { id: req.params.id },
+      data: { sittingCount },
+    });
+    res.json({ appointment });
+  } catch (err) {
+    next(err);
+  }
+});
+
+appointmentsRouter.patch("/:id/payment-status", requireAuth, async (req, res, next) => {
+  try {
+    const { paymentStatus } = updateAppointmentPaymentStatusSchema.parse(req.body);
+    const appointment = await prisma.appointment.update({
+      where: { id: req.params.id },
+      data: { paymentStatus },
     });
     res.json({ appointment });
   } catch (err) {

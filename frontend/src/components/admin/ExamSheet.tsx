@@ -1,7 +1,6 @@
 import { useId, useLayoutEffect, useRef } from "react";
 import { clinicInfo } from "../../config/clinicInfo";
 import { ToothIcon } from "../icons/DentalIcons";
-import { ArchChart } from "./ArchChart";
 import { ToothChart, ToothLegend } from "./ToothChart";
 import {
   QUAD_FIELDS,
@@ -202,7 +201,6 @@ export function ExamSheet({ values, onChange, onToothClick }: ExamSheetProps) {
       <h3 className={styles.heading}>CLINICAL FINDINGS:</h3>
       <div className={styles.findings}>
         <div className={styles.chart}>
-          <ArchChart marks={values.teeth} onToothClick={onToothClick} />
           <ToothChart marks={values.teeth} onToothClick={onToothClick} hideLegend />
         </div>
         <div className={styles.findingsList}>

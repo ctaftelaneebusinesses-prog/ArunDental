@@ -453,3 +453,30 @@
     animation: none;
   }
 }
+
+/* ============ Phone layout ============ */
+@media (max-width: 700px) {
+  .statsGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .sectionTitle {
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+  }
+
+  .sectionTitle::before {
+    height: 22px;
+    width: 5px;
+  }
+
+  .heading {
+    font-size: 1.6rem;
+  }
+
+  .brand strong {
+    font-size: 1rem;
+  }
+}
