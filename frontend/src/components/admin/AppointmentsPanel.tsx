@@ -2,6 +2,7 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 import {
   fetchAppointments,
   rescheduleAppointment,
+  updateAppointmentFeeAmount,
   updateAppointmentPaymentStatus,
   updateAppointmentSitting,
   updateAppointmentStatus,
@@ -101,6 +102,19 @@ export function AppointmentsPanel({ refreshKey = 0, onExamine }: AppointmentsPan
     }
   }
 
+  async function handleFeeAmountChange(id: string, feeAmount: number | null) {
+    setBusyId(id);
+    setActionError(null);
+    try {
+      await updateAppointmentFeeAmount(id, feeAmount);
+      await load(true);
+    } catch (err) {
+      setActionError(err instanceof ApiError ? err.message : "Failed to update fee amount.");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
   async function handleReschedule(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!rescheduling) return;
@@ -168,7 +182,7 @@ export function AppointmentsPanel({ refreshKey = 0, onExamine }: AppointmentsPan
         ) : appointments.length === 0 ? (
           <p className={tableStyles.emptyState}>No appointments found for the selected filters.</p>
         ) : (
-          <table className={tableStyles.table}>
+          <table className={`${tableStyles.table} ${tableStyles.appointmentsTable}`}>
             <thead>
               <tr>
                 <th>OP Number</th>
@@ -204,6 +218,7 @@ export function AppointmentsPanel({ refreshKey = 0, onExamine }: AppointmentsPan
                             .filter(Boolean)
                             .join(" · ") || "—"}
                         </div>
+                        <div className={`${tableStyles.personMeta} ${tableStyles.compactOnly}`}>{appointment.mobile}</div>
                       </div>
                     </div>
                   </td>
@@ -234,6 +249,8 @@ export function AppointmentsPanel({ refreshKey = 0, onExamine }: AppointmentsPan
                       opNumber={appointment.opNumber}
                       disabled={busyId === appointment.id}
                       onChange={(status) => handlePaymentStatusChange(appointment.id, status)}
+                      amount={appointment.feeAmount}
+                      onAmountChange={(amount) => handleFeeAmountChange(appointment.id, amount)}
                     />
                   </td>
                   <td data-label="Actions">

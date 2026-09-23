@@ -31,6 +31,10 @@ patientsRouter.get("/export", async (_req, res, next) => {
         dentalProblem: patient.dentalProblem,
         previousTreatment: patient.previousTreatment,
         status: patient.appointments[0]?.status ?? null,
+        appointmentDate: patient.appointments[0]?.appointmentDate ?? null,
+        sittingCount: patient.appointments[0]?.sittingCount ?? null,
+        paymentStatus: patient.appointments[0]?.paymentStatus ?? null,
+        feeAmount: patient.appointments[0]?.feeAmount ?? null,
         createdAt: patient.createdAt,
       })),
     });

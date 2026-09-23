@@ -35,6 +35,11 @@ export interface PatientExportRow {
   previousTreatment: string | null;
   // Status of the patient's most recent appointment (Pending, Confirmed, etc.) — null if they have none.
   status: string | null;
+  // Latest appointment's visit date, sittings and fees — null if they have none.
+  appointmentDate: string | null;
+  sittingCount: number | null;
+  paymentStatus: string | null;
+  feeAmount: number | null;
   createdAt: string;
 }
 

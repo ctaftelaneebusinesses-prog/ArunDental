@@ -93,6 +93,10 @@ export function PatientsPanel() {
         "Address",
         "Dental Problem",
         "Previous Treatment",
+        "Appointment Date",
+        "Sittings",
+        "Payment Status",
+        "Fee Amount (Rs)",
         "Registered On",
       ];
       const rows = res.patients.map((p) => [
@@ -107,6 +111,10 @@ export function PatientsPanel() {
         p.address,
         p.dentalProblem,
         p.previousTreatment,
+        p.appointmentDate,
+        p.sittingCount,
+        p.paymentStatus,
+        p.feeAmount,
         new Date(p.createdAt).toLocaleDateString("en-IN"),
       ]);
       downloadCsv(`patients-${new Date().toISOString().slice(0, 10)}.csv`, [header, ...rows]);

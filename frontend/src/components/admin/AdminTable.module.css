@@ -392,7 +392,29 @@
   }
 }
 
+/* Mobile number is shown under the patient name only on laptop widths. */
+.appointmentsTable {
+  /* marker class for appointment-only column rules */
+}
+
+.compactOnly {
+  display: none;
+}
+
 @media (min-width: 761px) and (max-width: 1360px) {
+  /* Drop the Mobile and Status columns: the mobile moves under the patient
+     name and the status is already shown by the dropdown in Actions. */
+  .appointmentsTable th:nth-child(3),
+  .appointmentsTable td[data-label="Mobile"],
+  .appointmentsTable th:nth-child(6),
+  .appointmentsTable td[data-label="Status"] {
+    display: none;
+  }
+
+  .appointmentsTable .compactOnly {
+    display: block;
+  }
+
   .table th,
   .table td {
     padding: 12px 8px;

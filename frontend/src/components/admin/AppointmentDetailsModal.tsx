@@ -96,7 +96,10 @@ export function AppointmentDetailsModal({ appointment, busy, onClose, onStatusCh
         </div>
         <div>
           <dt>Fees</dt>
-          <dd>{appointment.paymentStatus}</dd>
+          <dd>
+            {appointment.paymentStatus}
+            {appointment.feeAmount != null && ` · ₹${appointment.feeAmount.toLocaleString("en-IN")}`}
+          </dd>
         </div>
         <div className={styles.fullWidth}>
           <dt>Address</dt>

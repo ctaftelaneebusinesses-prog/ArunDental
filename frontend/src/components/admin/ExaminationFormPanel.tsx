@@ -24,6 +24,7 @@ import {
   type ExamPhoto,
 } from "./examPhotos";
 import styles from "./ExaminationFormPanel.module.css";
+import { downloadElementPagesAsPdf } from "../../utils/downloadPdf";
 
 type Tool = ToothMark | "erase";
 
@@ -54,6 +55,10 @@ export function ExaminationFormPanel({ examRequest }: ExaminationFormPanelProps 
   const [photoMessage, setPhotoMessage] = useState<string | null>(null);
   const [photosNotKept, setPhotosNotKept] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
+  const [saveMenuOpen, setSaveMenuOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const saveMenuRef = useRef<HTMLDivElement>(null);
+  const exportRef = useRef<HTMLDivElement>(null);
   const skipFirstSave = useRef(true);
   const skipFirstPhotoSave = useRef(true);
 
@@ -187,6 +192,32 @@ export function ExaminationFormPanel({ examRequest }: ExaminationFormPanelProps 
     if (files.length > 0) void addPhotoFiles(files);
   }
 
+  // Close the Save menu on any click outside it.
+  useEffect(() => {
+    if (!saveMenuOpen) return;
+    function onPointerDown(event: PointerEvent) {
+      if (!saveMenuRef.current?.contains(event.target as Node)) setSaveMenuOpen(false);
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [saveMenuOpen]);
+
+  async function handleDownload() {
+    setSaveMenuOpen(false);
+    setIsDownloading(true);
+    try {
+      // Let the off-screen copy render (and its images load) before capturing it.
+      await new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 150)));
+      if (!exportRef.current) return;
+      const name = [values.opNumber, values.name].filter(Boolean).join("-").replace(/[^\w-]+/g, "_") || "examination";
+      await downloadElementPagesAsPdf(exportRef.current, `${name}.pdf`);
+    } catch {
+      window.alert("Couldn't create the PDF. Please try Print instead.");
+    } finally {
+      setIsDownloading(false);
+    }
+  }
+
   function handleClear() {
     if (!window.confirm("Clear the whole form (including any photos) and start a new one?")) return;
     setValues(createEmptyExam());
@@ -232,9 +263,38 @@ export function ExaminationFormPanel({ examRequest }: ExaminationFormPanelProps 
           <button type="button" className="btn btn-secondary btn-sm" onClick={handleClear}>
             New / Clear
           </button>
-          <button type="button" className="btn btn-primary btn-sm" onClick={() => window.print()}>
-            Print Form
-          </button>
+          <div className={styles.saveWrap} ref={saveMenuRef}>
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              aria-haspopup="menu"
+              aria-expanded={saveMenuOpen}
+              disabled={isDownloading}
+              onClick={() => setSaveMenuOpen((open) => !open)}
+            >
+              {isDownloading ? "Preparing PDF…" : "Save"}
+              <span aria-hidden="true" className={styles.caret}>▾</span>
+            </button>
+            {saveMenuOpen && (
+              <div className={styles.saveMenu} role="menu">
+                <button type="button" role="menuitem" onClick={handleDownload}>
+                  <strong>Download</strong>
+                  <span>Save as a PDF file</span>
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    setSaveMenuOpen(false);
+                    window.print();
+                  }}
+                >
+                  <strong>Print</strong>
+                  <span>Open the print window (A4)</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -305,21 +365,12 @@ export function ExaminationFormPanel({ examRequest }: ExaminationFormPanelProps 
         )}
       </div>
 
-      <div className={`${styles.actions} ${styles.actionsBottom}`}>
-        <button type="button" className="btn btn-secondary btn-sm" onClick={handleClear}>
-          New / Clear
-        </button>
-        <button type="button" className="btn btn-primary btn-sm" onClick={() => window.print()}>
-          Print Form
-        </button>
-      </div>
-
       <p className={styles.hint}>
         {savedAt
           ? `Draft saved on this computer at ${savedAt.toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" })}.`
           : "Your typing is saved automatically on this computer until you clear the form."}{" "}
-        Nothing is sent to the server. Use Print Form, then choose A4 in the print window.
-        {photosNotKept && " These photos are too large to keep after a refresh, so print before closing this page."}
+        Nothing is sent to the server. Use Save to download a PDF or print it.
+        {photosNotKept && " These photos are too large to keep after a refresh, so save before closing this page."}
       </p>
 
       {showCamera && (
@@ -331,6 +382,15 @@ export function ExaminationFormPanel({ examRequest }: ExaminationFormPanelProps 
           onClose={() => setShowCamera(false)}
         />
       )}
+
+      {isDownloading &&
+        createPortal(
+          <div ref={exportRef} className={styles.exportRoot} aria-hidden="true">
+            <ExamSheet values={values} />
+            {photos.length > 0 && <ExamPhotosPage values={values} photos={photos} />}
+          </div>,
+          document.body,
+        )}
 
       {printRoot &&
         createPortal(

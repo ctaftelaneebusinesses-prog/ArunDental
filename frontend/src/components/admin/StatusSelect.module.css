@@ -25,3 +25,56 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* ---------- Fees: status + amount ---------- */
+.feeGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.amount {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-white);
+  font-weight: 800;
+  font-size: 0.86rem;
+  transition: border-color var(--transition-fast);
+}
+
+.amount:focus-within {
+  border-color: var(--color-primary);
+}
+
+.amountDue span {
+  color: #c77700;
+}
+
+.amountPaid span {
+  color: #0d9f6e;
+}
+
+.amount input {
+  width: 100%;
+  min-width: 0;
+  padding: 7px 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  -moz-appearance: textfield;
+}
+
+.amount input::-webkit-outer-spin-button,
+.amount input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

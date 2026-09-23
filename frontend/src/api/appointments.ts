@@ -59,3 +59,8 @@ export function updateAppointmentSitting(id: string, sittingCount: number) {
 export function updateAppointmentPaymentStatus(id: string, paymentStatus: PaymentStatus) {
   return apiPatchJson(`/appointments/${id}/payment-status`, { paymentStatus });
 }
+
+// null clears the amount.
+export function updateAppointmentFeeAmount(id: string, feeAmount: number | null) {
+  return apiPatchJson(`/appointments/${id}/payment-status`, { feeAmount });
+}

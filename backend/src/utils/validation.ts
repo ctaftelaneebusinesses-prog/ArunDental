@@ -39,9 +39,15 @@ export const updateAppointmentSittingSchema = z.object({
   sittingCount: z.coerce.number().int().min(1, "Sitting count can't go below 1.").max(50),
 });
 
-export const updateAppointmentPaymentStatusSchema = z.object({
-  paymentStatus: z.enum(paymentStatuses),
-});
+export const updateAppointmentPaymentStatusSchema = z
+  .object({
+    paymentStatus: z.enum(paymentStatuses).optional(),
+    // null clears the amount; omitted leaves it unchanged.
+    feeAmount: z.coerce.number().int().min(0, "Amount can't be negative.").max(10_000_000).nullable().optional(),
+  })
+  .refine((body) => body.paymentStatus !== undefined || body.feeAmount !== undefined, {
+    message: "Nothing to update.",
+  });
 
 export const rescheduleAppointmentSchema = z.object({
   appointmentDate: z.string().min(1, "Please choose a date."),

@@ -29,6 +29,8 @@ export interface AppointmentSummary {
   status: AppointmentStatus;
   sittingCount: number;
   paymentStatus: PaymentStatus;
+  // Whole rupees; null until entered.
+  feeAmount: number | null;
   createdAt: string;
 }
 

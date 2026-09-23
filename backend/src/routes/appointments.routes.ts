@@ -113,6 +113,7 @@ appointmentsRouter.get("/", requireAuth, async (req, res, next) => {
         status: appointment.status,
         sittingCount: appointment.sittingCount,
         paymentStatus: appointment.paymentStatus,
+        feeAmount: appointment.feeAmount,
         createdAt: appointment.createdAt,
       })),
     });
@@ -149,10 +150,10 @@ appointmentsRouter.patch("/:id/sitting", requireAuth, async (req, res, next) => 
 
 appointmentsRouter.patch("/:id/payment-status", requireAuth, async (req, res, next) => {
   try {
-    const { paymentStatus } = updateAppointmentPaymentStatusSchema.parse(req.body);
+    const { paymentStatus, feeAmount } = updateAppointmentPaymentStatusSchema.parse(req.body);
     const appointment = await prisma.appointment.update({
       where: { id: req.params.id },
-      data: { paymentStatus },
+      data: { paymentStatus, feeAmount },
     });
     res.json({ appointment });
   } catch (err) {

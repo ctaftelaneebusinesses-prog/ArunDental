@@ -56,6 +56,9 @@ model Appointment {
   // "Payment Pending" | "Payment Completed" — kept as a free string (like
   // `status`) rather than a Prisma enum, matching this schema's existing style.
   paymentStatus     String   @default("Payment Pending")
+  // Fee for this OP in whole rupees — the amount due while pending, the amount
+  // received once completed. Null until the admin enters it.
+  feeAmount         Int?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
