@@ -355,3 +355,73 @@
     text-align: right;
   }
 }
+
+/* ============ Laptop / tablet: keep every column visible ============ */
+@media (min-width: 761px) {
+  .tableWrap {
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .table th {
+    white-space: nowrap;
+  }
+
+  .table th,
+  .table td {
+    padding: 14px 12px;
+    vertical-align: middle;
+  }
+
+  .table th:first-child,
+  .table td:first-child {
+    padding-left: 20px;
+  }
+
+  .table th:last-child,
+  .table td:last-child {
+    padding-right: 20px;
+  }
+
+  .personMeta {
+    white-space: nowrap;
+  }
+
+  .actionsRow {
+    flex-wrap: nowrap;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1360px) {
+  .table th,
+  .table td {
+    padding: 12px 8px;
+    font-size: 0.86rem;
+  }
+
+  .table th {
+    font-size: 0.7rem;
+  }
+
+  .personCell {
+    gap: 8px;
+  }
+
+  .clamp {
+    max-width: 120px;
+  }
+
+  .actionsRow select {
+    min-width: 112px;
+  }
+
+  .table td[data-label="Fees"] select {
+    min-width: 0;
+    max-width: 150px;
+  }
+
+  .iconBtn {
+    width: 32px;
+    height: 32px;
+  }
+}
