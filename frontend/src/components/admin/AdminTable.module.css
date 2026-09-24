@@ -126,6 +126,16 @@
   color: var(--color-primary);
 }
 
+.whatsappBtn {
+  color: #1ea952;
+}
+
+.whatsappBtn:hover {
+  background: #e7f8ee;
+  border-color: #25d366;
+  color: #128c4b;
+}
+
 .iconBtn:focus-visible {
   outline: 3px solid var(--color-primary);
   outline-offset: 2px;

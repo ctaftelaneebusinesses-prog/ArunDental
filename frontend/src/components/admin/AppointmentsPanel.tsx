@@ -17,7 +17,8 @@ import { PaymentStatusSelect } from "./PaymentStatusSelect";
 import { Modal } from "../Modal";
 import { AppointmentDetailsModal } from "./AppointmentDetailsModal";
 import { EyeIcon } from "./AdminIcons";
-import { ClockIcon, ToothIcon } from "../icons/DentalIcons";
+import { ClockIcon, ToothIcon, WhatsAppIcon } from "../icons/DentalIcons";
+import { opConfirmationText, whatsappHref } from "../../utils/contactLinks";
 import tableStyles from "./AdminTable.module.css";
 
 const STATUS_OPTIONS: AppointmentStatus[] = ["Pending", "Confirmed", "Arrived", "Completed", "Cancelled"];
@@ -271,6 +272,17 @@ export function AppointmentsPanel({ refreshKey = 0, onExamine }: AppointmentsPan
                       >
                         <EyeIcon width={17} height={17} />
                       </button>
+
+                      <a
+                        href={whatsappHref(appointment.mobile, opConfirmationText(appointment))}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={`${tableStyles.iconBtn} ${tableStyles.whatsappBtn}`}
+                        title="Send OP confirmation on WhatsApp"
+                        aria-label={`Send OP confirmation to ${appointment.patientName} on WhatsApp`}
+                      >
+                        <WhatsAppIcon width={17} height={17} />
+                      </a>
 
                       {onExamine && (
                         <button

@@ -4,6 +4,7 @@ import { PageMeta } from "../components/PageMeta";
 import { buildWhatsAppLink, clinicInfo } from "../config/clinicInfo";
 import { WhatsAppIcon } from "../components/icons/DentalIcons";
 import type { OpConfirmationResult } from "../types";
+import { patientConfirmationRequestText } from "../utils/contactLinks";
 import styles from "./OPConfirmation.module.css";
 
 function formatDate(value: string): string {
@@ -31,7 +32,7 @@ export default function OPConfirmation() {
     );
   }
 
-  const whatsappMessage = `Hello, this is to confirm my OP registration at ${clinicInfo.name}.\nOP No: ${result.opNumber}\nPatient Name: ${result.patientName}\nAppointment Date: ${formatDate(result.appointmentDate)}${result.appointmentTime ? `\nAppointment Time: ${result.appointmentTime}` : ""}`;
+  const whatsappMessage = patientConfirmationRequestText(result);
 
   return (
     <>

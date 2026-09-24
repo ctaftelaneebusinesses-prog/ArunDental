@@ -18,7 +18,7 @@ export const createAppointmentSchema = z.object({
   gender: z.enum(genders).optional(),
   bloodGroup: z.enum(bloodGroups).optional(),
   occupation: z.string().trim().min(1, "Please select an occupation.").max(100),
-  preferredDate: z.string().optional(),
+  preferredDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Please choose a preferred date."),
   preferredTime: z.string().optional(),
   dentalProblem: z.string().trim().max(1000).optional(),
   previousTreatment: z.string().trim().max(1000).optional(),

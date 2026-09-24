@@ -306,6 +306,7 @@
       "photo": "Please upload or capture a patient photo.",
       "age": "Please enter a valid age.",
       "occupation": "Please select an occupation.",
+      "preferredDate": "Please choose a preferred date.",
       "consent": "Please confirm the consent statement to proceed.",
       "generic": "Something went wrong. Please try again."
     },

@@ -93,6 +93,7 @@ export default function BookOP() {
     } else if (values.occupation === OTHER_OCCUPATION && !otherOccupation.trim()) {
       next.occupation = t("bookOp.errors.occupation");
     }
+    if (!values.preferredDate) next.preferredDate = t("bookOp.errors.preferredDate");
     if (!values.consent) next.consent = t("bookOp.errors.consent");
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -113,7 +114,7 @@ export default function BookOP() {
         gender: values.gender || undefined,
         bloodGroup: values.bloodGroup || undefined,
         occupation: values.occupation === OTHER_OCCUPATION ? otherOccupation.trim() : values.occupation,
-        preferredDate: values.preferredDate || undefined,
+        preferredDate: values.preferredDate,
         dentalProblem: values.dentalProblem.trim() || undefined,
         previousTreatment: values.previousTreatment.trim() || undefined,
         consent: values.consent,
@@ -361,14 +362,19 @@ export default function BookOP() {
 
             <FormSection number={2} title={t("bookOp.sections.visit")}>
               <div className="field">
-                <label htmlFor="preferredDate">{t("bookOp.fields.preferredDate")}</label>
+                <label htmlFor="preferredDate">
+                  {t("bookOp.fields.preferredDate")} <span className="required">*</span>
+                </label>
                 <input
                   id="preferredDate"
                   type="date"
                   value={values.preferredDate}
                   onChange={(e) => update("preferredDate", e.target.value)}
                   min={new Date().toISOString().slice(0, 10)}
+                  className={errors.preferredDate ? "has-error" : ""}
+                  aria-invalid={Boolean(errors.preferredDate)}
                 />
+                {errors.preferredDate && <p className="field-error">{errors.preferredDate}</p>}
               </div>
 
               <div className="field">

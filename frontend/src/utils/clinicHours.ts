@@ -19,7 +19,7 @@ export function isClinicOpenNow(schedule: DayHours[]): boolean {
   return currentMinutes >= openHour * 60 + openMinute && currentMinutes < closeHour * 60 + closeMinute;
 }
 
-function formatTime(value: string): string {
+export function formatTime(value: string): string {
   const [hourStr, minuteStr] = value.split(":");
   const hour = Number(hourStr);
   const period = hour >= 12 ? "PM" : "AM";

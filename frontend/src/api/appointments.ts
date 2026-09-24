@@ -9,7 +9,7 @@ export interface BookOpFormValues {
   gender?: string;
   bloodGroup?: string;
   occupation?: string;
-  preferredDate?: string;
+  preferredDate: string;
   preferredTime?: string;
   dentalProblem?: string;
   previousTreatment?: string;
@@ -26,7 +26,7 @@ export function submitBookOp(values: BookOpFormValues): Promise<OpConfirmationRe
     gender: values.gender || undefined,
     bloodGroup: values.bloodGroup || undefined,
     occupation: values.occupation || undefined,
-    preferredDate: values.preferredDate || undefined,
+    preferredDate: values.preferredDate,
     preferredTime: values.preferredTime || undefined,
     dentalProblem: values.dentalProblem || undefined,
     previousTreatment: values.previousTreatment || undefined,

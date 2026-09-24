@@ -55,7 +55,7 @@ export function ExaminationFormPanel({ examRequest }: ExaminationFormPanelProps 
   const [photoMessage, setPhotoMessage] = useState<string | null>(null);
   const [photosNotKept, setPhotosNotKept] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
-  const [saveMenuOpen, setSaveMenuOpen] = useState(false);
+  const [saveMenuOpen, setSaveMenuOpen] = useState<"top" | "bottom" | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const saveMenuRef = useRef<HTMLDivElement>(null);
   const exportRef = useRef<HTMLDivElement>(null);
@@ -196,14 +196,14 @@ export function ExaminationFormPanel({ examRequest }: ExaminationFormPanelProps 
   useEffect(() => {
     if (!saveMenuOpen) return;
     function onPointerDown(event: PointerEvent) {
-      if (!saveMenuRef.current?.contains(event.target as Node)) setSaveMenuOpen(false);
+      if (!saveMenuRef.current?.contains(event.target as Node)) setSaveMenuOpen(null);
     }
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [saveMenuOpen]);
 
   async function handleDownload() {
-    setSaveMenuOpen(false);
+    setSaveMenuOpen(null);
     setIsDownloading(true);
     try {
       // Let the off-screen copy render (and its images load) before capturing it.
@@ -225,6 +225,51 @@ export function ExaminationFormPanel({ examRequest }: ExaminationFormPanelProps 
     setPhotoMessage(null);
     clearDraft();
     setSavedAt(null);
+  }
+
+  // The same New / Clear + Save controls sit above and below the form, so staff
+  // don't have to scroll back up after filling it in.
+  function renderActions(placement: "top" | "bottom") {
+    const open = saveMenuOpen === placement;
+    return (
+      <div className={`${styles.actions} ${placement === "bottom" ? styles.actionsBottom : ""}`}>
+        <button type="button" className="btn btn-secondary btn-sm" onClick={handleClear}>
+          New / Clear
+        </button>
+        <div className={styles.saveWrap} ref={open ? saveMenuRef : undefined}>
+          <button
+            type="button"
+            className="btn btn-primary btn-sm"
+            aria-haspopup="menu"
+            aria-expanded={open}
+            disabled={isDownloading}
+            onClick={() => setSaveMenuOpen(open ? null : placement)}
+          >
+            {isDownloading ? "Preparing PDF…" : "Save"}
+            <span aria-hidden="true" className={styles.caret}>▾</span>
+          </button>
+          {open && (
+            <div className={`${styles.saveMenu} ${placement === "bottom" ? styles.saveMenuUp : ""}`} role="menu">
+              <button type="button" role="menuitem" onClick={handleDownload}>
+                <strong>Download</strong>
+                <span>Save as a PDF file</span>
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setSaveMenuOpen(null);
+                  window.print();
+                }}
+              >
+                <strong>Print</strong>
+                <span>Open the print window (A4)</span>
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -259,43 +304,7 @@ export function ExaminationFormPanel({ examRequest }: ExaminationFormPanelProps 
           )}
         </div>
 
-        <div className={styles.actions}>
-          <button type="button" className="btn btn-secondary btn-sm" onClick={handleClear}>
-            New / Clear
-          </button>
-          <div className={styles.saveWrap} ref={saveMenuRef}>
-            <button
-              type="button"
-              className="btn btn-primary btn-sm"
-              aria-haspopup="menu"
-              aria-expanded={saveMenuOpen}
-              disabled={isDownloading}
-              onClick={() => setSaveMenuOpen((open) => !open)}
-            >
-              {isDownloading ? "Preparing PDF…" : "Save"}
-              <span aria-hidden="true" className={styles.caret}>▾</span>
-            </button>
-            {saveMenuOpen && (
-              <div className={styles.saveMenu} role="menu">
-                <button type="button" role="menuitem" onClick={handleDownload}>
-                  <strong>Download</strong>
-                  <span>Save as a PDF file</span>
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  onClick={() => {
-                    setSaveMenuOpen(false);
-                    window.print();
-                  }}
-                >
-                  <strong>Print</strong>
-                  <span>Open the print window (A4)</span>
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+        {renderActions("top")}
       </div>
 
       <div className={styles.tools} role="radiogroup" aria-label="Tooth chart marking tool">
@@ -364,6 +373,8 @@ export function ExaminationFormPanel({ examRequest }: ExaminationFormPanelProps 
           />
         )}
       </div>
+
+      {renderActions("bottom")}
 
       <p className={styles.hint}>
         {savedAt

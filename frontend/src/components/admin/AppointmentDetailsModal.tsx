@@ -1,8 +1,7 @@
 import { patientPhotoUrl } from "../../api/patients";
 import { PatientAvatar } from "./PatientAvatar";
-import { clinicInfo } from "../../config/clinicInfo";
 import type { AppointmentStatus, AppointmentSummary } from "../../types";
-import { formatDateTime, telHref, whatsappHref } from "../../utils/contactLinks";
+import { formatDateTime, opConfirmationText, telHref, whatsappHref } from "../../utils/contactLinks";
 import { Modal } from "../Modal";
 import { PhoneIcon, WhatsAppIcon } from "../icons/DentalIcons";
 import { AppointmentStatusBadge } from "./StatusBadge";
@@ -18,7 +17,7 @@ interface Props {
 
 export function AppointmentDetailsModal({ appointment, busy, onClose, onStatusChange }: Props) {
   const photoUrl = patientPhotoUrl(appointment.patientId);
-  const whatsappText = `Hello ${appointment.patientName}, this is ${clinicInfo.name} regarding your appointment (${appointment.opNumber}).`;
+  const whatsappText = opConfirmationText(appointment);
 
   return (
     <Modal title={`Appointment ${appointment.opNumber}`} onClose={onClose} wide>

@@ -13,6 +13,7 @@ import {
   updateAppointmentStatusSchema,
 } from "../utils/validation";
 import { CLINIC } from "../config/clinic";
+import { notifyNewOp } from "../services/notification.service";
 
 export const appointmentsRouter = Router();
 
@@ -54,11 +55,13 @@ appointmentsRouter.post(
         data: {
           patientId: patient.id,
           opNumber,
-          appointmentDate: data.preferredDate || new Date().toISOString().slice(0, 10),
+          appointmentDate: data.preferredDate,
           appointmentTime: data.preferredTime,
           status: "Pending",
         },
       });
+
+      notifyNewOp({ ...patient, appointmentDate: appointment.appointmentDate, appointmentTime: appointment.appointmentTime });
 
       res.status(201).json({
         opNumber: appointment.opNumber,
