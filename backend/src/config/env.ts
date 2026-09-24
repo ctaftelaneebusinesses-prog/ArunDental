@@ -27,4 +27,7 @@ export const env = {
   smtpPass: process.env.SMTP_PASS ?? "",
   mailFrom: process.env.MAIL_FROM ?? process.env.SMTP_USER ?? "",
   doctorEmail: process.env.DOCTOR_EMAIL ?? "",
+  // Brevo (brevo.com) HTTPS email API — used instead of SMTP when set, because
+  // Railway blocks outbound SMTP on non-Pro plans.
+  brevoApiKey: process.env.BREVO_API_KEY ?? "",
 };

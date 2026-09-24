@@ -64,7 +64,8 @@ function formatWhen(details: NewOpDetails): string {
 }
 
 async function sendDoctorEmail(details: NewOpDetails): Promise<void> {
-  if (!transporter || !env.doctorEmail) {
+  if (!env.doctorEmail || !env.mailFrom || (!env.brevoApiKey && !transporter)) {
+    console.warn("Doctor email skipped: set DOCTOR_EMAIL, MAIL_FROM and BREVO_API_KEY (or SMTP_USER/SMTP_PASS).");
     return;
   }
 
@@ -150,13 +151,47 @@ async function sendDoctorEmail(details: NewOpDetails): Promise<void> {
     `You can review, confirm or reschedule this appointment from the admin dashboard.`,
   ].join("\n");
 
-  await transporter.sendMail({
-    from: `"${CLINIC.name}" <${env.mailFrom}>`,
+  await sendEmail({
     to: env.doctorEmail,
     subject: `New OP Registration | ${details.opNumber} | ${name} | ${formatDate(details.appointmentDate)}`,
     text,
     html,
   });
+}
+
+interface EmailMessage {
+  to: string;
+  subject: string;
+  text: string;
+  html: string;
+}
+
+// Railway blocks outbound SMTP on its non-Pro plans, so in production mail goes
+// through Brevo's HTTPS API when BREVO_API_KEY is set. SMTP (e.g. Gmail) is the
+// fallback — handy for local development.
+async function sendEmail(message: EmailMessage): Promise<void> {
+  if (env.brevoApiKey) {
+    const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: { "api-key": env.brevoApiKey, "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        sender: { name: CLINIC.name, email: env.mailFrom },
+        to: [{ email: message.to }],
+        subject: message.subject,
+        textContent: message.text,
+        htmlContent: message.html,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`Brevo rejected the email (${response.status}): ${await response.text()}`);
+    }
+    return;
+  }
+
+  if (!transporter) {
+    throw new Error("No email provider configured (set BREVO_API_KEY, or SMTP_USER and SMTP_PASS).");
+  }
+  await transporter.sendMail({ from: `"${CLINIC.name}" <${env.mailFrom}>`, ...message });
 }
 
 // Fire-and-forget: a mail outage must never fail the booking itself. Patients
