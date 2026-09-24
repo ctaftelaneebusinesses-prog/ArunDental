@@ -1,5 +1,25 @@
 export type AppointmentStatus = "Pending" | "Confirmed" | "Arrived" | "Completed" | "Cancelled";
-export type PaymentStatus = "Payment Pending" | "Payment Completed";
+export type PaymentStatus = "Payment Pending" | "Partially Paid" | "Payment Completed";
+export type PaymentMethod = "Cash" | "UPI" | "Card" | "Bank Transfer" | "Other";
+
+export interface PaymentRecord {
+  id: string;
+  amount: number;
+  method: PaymentMethod;
+  note: string | null;
+  paidAt: string;
+}
+
+// Fee position of one OP. Amounts are whole rupees.
+export interface FeeDetails {
+  // Total fee; null until entered.
+  feeAmount: number | null;
+  paidAmount: number;
+  // feeAmount − paidAmount; null while no total fee is set.
+  dueAmount: number | null;
+  paymentStatus: PaymentStatus;
+  payments: PaymentRecord[];
+}
 export type Gender = "Male" | "Female" | "Other" | "Prefer not to say";
 export type BloodGroup = "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-" | "Unknown";
 
@@ -10,7 +30,7 @@ export interface AdminUser {
   role: string;
 }
 
-export interface AppointmentSummary {
+export interface AppointmentSummary extends FeeDetails {
   id: string;
   opNumber: string;
   patientId: string;
@@ -28,9 +48,6 @@ export interface AppointmentSummary {
   appointmentTime: string | null;
   status: AppointmentStatus;
   sittingCount: number;
-  paymentStatus: PaymentStatus;
-  // Whole rupees; null until entered.
-  feeAmount: number | null;
   createdAt: string;
 }
 
@@ -45,12 +62,13 @@ export interface PatientSummary {
   createdAt: string;
 }
 
-export interface PatientAppointmentRecord {
+export interface PatientAppointmentRecord extends FeeDetails {
   id: string;
   opNumber: string;
   appointmentDate: string;
   appointmentTime: string | null;
   status: AppointmentStatus;
+  sittingCount: number;
   createdAt: string;
 }
 

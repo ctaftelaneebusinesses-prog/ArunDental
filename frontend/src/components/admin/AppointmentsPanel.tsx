@@ -1,27 +1,28 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import {
+  deleteAppointment,
   fetchAppointments,
   rescheduleAppointment,
-  updateAppointmentFeeAmount,
-  updateAppointmentPaymentStatus,
   updateAppointmentSitting,
   updateAppointmentStatus,
 } from "../../api/appointments";
 import { ApiError } from "../../api/client";
-import { PatientAvatar } from "./PatientAvatar";
-import type { AppointmentStatus, AppointmentSummary, PaymentStatus } from "../../types";
-import { AppointmentStatusBadge } from "./StatusBadge";
-import { StatusSelect } from "./StatusSelect";
-import { SittingStepper } from "./SittingStepper";
-import { PaymentStatusSelect } from "./PaymentStatusSelect";
+import type { AppointmentStatus, AppointmentSummary } from "../../types";
+import { AppointmentCard } from "./AppointmentCard";
+import { FeesManager } from "./FeesManager";
 import { Modal } from "../Modal";
 import { AppointmentDetailsModal } from "./AppointmentDetailsModal";
-import { EyeIcon } from "./AdminIcons";
-import { ClockIcon, ToothIcon, WhatsAppIcon } from "../icons/DentalIcons";
-import { opConfirmationText, whatsappHref } from "../../utils/contactLinks";
-import tableStyles from "./AdminTable.module.css";
+import { ToothIcon } from "../icons/DentalIcons";
+import styles from "./AppointmentsPanel.module.css";
 
-const STATUS_OPTIONS: AppointmentStatus[] = ["Pending", "Confirmed", "Arrived", "Completed", "Cancelled"];
+const STATUS_FILTERS: { value: "" | AppointmentStatus; label: string }[] = [
+  { value: "", label: "All" },
+  { value: "Pending", label: "Pending" },
+  { value: "Confirmed", label: "Confirmed" },
+  { value: "Arrived", label: "Arrived" },
+  { value: "Completed", label: "Completed" },
+  { value: "Cancelled", label: "Cancelled" },
+];
 
 interface AppointmentsPanelProps {
   refreshKey?: number;
@@ -37,9 +38,11 @@ export function AppointmentsPanel({ refreshKey = 0, onExamine }: AppointmentsPan
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dateFilter, setDateFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"" | AppointmentStatus>("");
   const [viewing, setViewing] = useState<AppointmentSummary | null>(null);
   const [rescheduling, setRescheduling] = useState<AppointmentSummary | null>(null);
+  // Appointment whose Fees & Payments dialog is open (id, so it follows reloads).
+  const [managingFeesId, setManagingFeesId] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
 
@@ -90,27 +93,22 @@ export function AppointmentsPanel({ refreshKey = 0, onExamine }: AppointmentsPan
     }
   }
 
-  async function handlePaymentStatusChange(id: string, paymentStatus: PaymentStatus) {
-    setBusyId(id);
-    setActionError(null);
-    try {
-      await updateAppointmentPaymentStatus(id, paymentStatus);
-      await load(true);
-    } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : "Failed to update payment status.");
-    } finally {
-      setBusyId(null);
+  async function handleDelete(appointment: AppointmentSummary) {
+    if (
+      !window.confirm(
+        `Permanently delete appointment ${appointment.opNumber} for ${appointment.patientName}? This cannot be undone.`
+      )
+    ) {
+      return;
     }
-  }
-
-  async function handleFeeAmountChange(id: string, feeAmount: number | null) {
-    setBusyId(id);
+    setBusyId(appointment.id);
     setActionError(null);
     try {
-      await updateAppointmentFeeAmount(id, feeAmount);
-      await load(true);
+      await deleteAppointment(appointment.id);
+      setAppointments((current) => current.filter((a) => a.id !== appointment.id));
+      if (viewing?.id === appointment.id) setViewing(null);
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : "Failed to update fee amount.");
+      setActionError(err instanceof ApiError ? err.message : "Failed to delete appointment.");
     } finally {
       setBusyId(null);
     }
@@ -137,37 +135,51 @@ export function AppointmentsPanel({ refreshKey = 0, onExamine }: AppointmentsPan
     }
   }
 
+  const managingFees = managingFeesId ? appointments.find((a) => a.id === managingFeesId) ?? null : null;
+  const hasFilters = Boolean(dateFilter || statusFilter);
+  const pendingCount = appointments.filter((a) => a.status === "Pending").length;
+
+  function clearFilters() {
+    setDateFilter("");
+    setStatusFilter("");
+  }
+
   return (
     <div>
-      <div className={tableStyles.toolbar}>
-        <div className={tableStyles.toolbarField}>
-          <label htmlFor="filter-date">Date</label>
-          <input id="filter-date" type="date" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} />
+      <div className={styles.bar}>
+        <div className={styles.pills} role="group" aria-label="Filter by status">
+          {STATUS_FILTERS.map((filter) => (
+            <button
+              key={filter.label}
+              type="button"
+              className={`${styles.pill} ${statusFilter === filter.value ? styles.pillActive : ""}`}
+              aria-pressed={statusFilter === filter.value}
+              onClick={() => setStatusFilter(filter.value)}
+            >
+              {filter.label}
+            </button>
+          ))}
         </div>
-        <div className={tableStyles.toolbarField}>
-          <label htmlFor="filter-status">Status</label>
-          <select id="filter-status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-            <option value="">All statuses</option>
-            {STATUS_OPTIONS.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
+
+        <div className={styles.dateWrap}>
+          <div className={styles.dateField}>
+            <label htmlFor="filter-date">Date</label>
+            <input id="filter-date" type="date" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} />
+          </div>
+          {hasFilters && (
+            <button type="button" className={`btn btn-secondary btn-sm ${styles.clear}`} onClick={clearFilters}>
+              Clear
+            </button>
+          )}
         </div>
-        {(dateFilter || statusFilter) && (
-          <button
-            type="button"
-            className="btn btn-secondary btn-sm"
-            onClick={() => {
-              setDateFilter("");
-              setStatusFilter("");
-            }}
-          >
-            Clear Filters
-          </button>
-        )}
       </div>
+
+      {!isLoading && !error && appointments.length > 0 && (
+        <p className={styles.summary} aria-live="polite">
+          Showing <strong>{appointments.length}</strong> appointment{appointments.length === 1 ? "" : "s"}
+          {pendingCount > 0 && <span className={styles.summaryPending}>{pendingCount} awaiting confirmation</span>}
+        </p>
+      )}
 
       {actionError && (
         <div className="alert alert-error" role="alert">
@@ -175,146 +187,46 @@ export function AppointmentsPanel({ refreshKey = 0, onExamine }: AppointmentsPan
         </div>
       )}
 
-      <div className={tableStyles.tableWrap}>
-        {isLoading ? (
-          <p className={tableStyles.loadingState}>Loading appointments...</p>
-        ) : error ? (
-          <p className={tableStyles.emptyState}>{error}</p>
-        ) : appointments.length === 0 ? (
-          <p className={tableStyles.emptyState}>No appointments found for the selected filters.</p>
-        ) : (
-          <table className={`${tableStyles.table} ${tableStyles.appointmentsTable}`}>
-            <thead>
-              <tr>
-                <th>OP Number</th>
-                <th>Patient</th>
-                <th>Mobile</th>
-                <th>Dental Problem</th>
-                <th>Date &amp; Time</th>
-                <th>Status</th>
-                <th>Sitting</th>
-                <th>Fees</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {appointments.map((appointment) => (
-                <tr key={appointment.id} className={appointment.status === "Pending" ? tableStyles.rowNew : undefined}>
-                  <td data-label="OP Number" className={tableStyles.nowrap}>
-                    {appointment.opNumber}
-                    {appointment.status === "Pending" && <span className={tableStyles.newPill}>New</span>}
-                  </td>
-                  <td data-label="Patient">
-                    <div className={tableStyles.personCell}>
-                      <PatientAvatar
-                        patientId={appointment.patientId}
-                        name={appointment.patientName}
-                        hasPhoto={appointment.hasPhoto}
-                        size={42}
-                      />
-                      <div>
-                        <div className={tableStyles.personName}>{appointment.patientName}</div>
-                        <div className={tableStyles.personMeta}>
-                          {[appointment.age ? `${appointment.age} yrs` : null, appointment.gender]
-                            .filter(Boolean)
-                            .join(" · ") || "—"}
-                        </div>
-                        <div className={`${tableStyles.personMeta} ${tableStyles.compactOnly}`}>{appointment.mobile}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td data-label="Mobile" className={tableStyles.nowrap}>
-                    {appointment.mobile}
-                  </td>
-                  <td data-label="Dental Problem">
-                    <div className={tableStyles.clamp}>{appointment.dentalProblem || "—"}</div>
-                  </td>
-                  <td data-label="Date & Time" className={tableStyles.nowrap}>
-                    <div>{appointment.appointmentDate}</div>
-                    <div className={tableStyles.personMeta}>{appointment.appointmentTime || "Time not set"}</div>
-                  </td>
-                  <td data-label="Status">
-                    <AppointmentStatusBadge status={appointment.status} />
-                  </td>
-                  <td data-label="Sitting">
-                    <SittingStepper
-                      value={appointment.sittingCount}
-                      opNumber={appointment.opNumber}
-                      disabled={busyId === appointment.id}
-                      onChange={(count) => handleSittingChange(appointment.id, count)}
-                    />
-                  </td>
-                  <td data-label="Fees">
-                    <PaymentStatusSelect
-                      value={appointment.paymentStatus}
-                      opNumber={appointment.opNumber}
-                      disabled={busyId === appointment.id}
-                      onChange={(status) => handlePaymentStatusChange(appointment.id, status)}
-                      amount={appointment.feeAmount}
-                      onAmountChange={(amount) => handleFeeAmountChange(appointment.id, amount)}
-                    />
-                  </td>
-                  <td data-label="Actions">
-                    <div className={tableStyles.actionsRow}>
-                      <StatusSelect
-                        value={appointment.status}
-                        opNumber={appointment.opNumber}
-                        disabled={busyId === appointment.id}
-                        onChange={(status) => handleStatusChange(appointment.id, status)}
-                      />
-
-                      <button
-                        type="button"
-                        className={tableStyles.iconBtn}
-                        title="View details"
-                        aria-label={`View details for ${appointment.opNumber}`}
-                        onClick={() => setViewing(appointment)}
-                      >
-                        <EyeIcon width={17} height={17} />
-                      </button>
-
-                      <a
-                        href={whatsappHref(appointment.mobile, opConfirmationText(appointment))}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={`${tableStyles.iconBtn} ${tableStyles.whatsappBtn}`}
-                        title="Send OP confirmation on WhatsApp"
-                        aria-label={`Send OP confirmation to ${appointment.patientName} on WhatsApp`}
-                      >
-                        <WhatsAppIcon width={17} height={17} />
-                      </a>
-
-                      {onExamine && (
-                        <button
-                          type="button"
-                          className={tableStyles.iconBtn}
-                          title="Open Examination Form for this patient"
-                          aria-label={`Open Examination Form for ${appointment.patientName}`}
-                          onClick={() => onExamine(appointment.patientId)}
-                        >
-                          <ToothIcon width={17} height={17} />
-                        </button>
-                      )}
-
-                      {(appointment.status === "Pending" || appointment.status === "Confirmed") && (
-                        <button
-                          type="button"
-                          className={tableStyles.iconBtn}
-                          title="Reschedule"
-                          aria-label={`Reschedule ${appointment.opNumber}`}
-                          onClick={() => setRescheduling(appointment)}
-                        >
-                          <ClockIcon width={17} height={17} />
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      {isLoading ? (
+        <ul className={styles.list} aria-busy="true" aria-label="Loading appointments">
+          {[0, 1, 2].map((n) => (
+            <li key={n} className={styles.skeleton} />
+          ))}
+        </ul>
+      ) : error ? (
+        <p className={styles.errorState}>{error}</p>
+      ) : appointments.length === 0 ? (
+        <div className={styles.empty}>
+          <span className={styles.emptyIcon}>
+            <ToothIcon width={30} height={30} />
+          </span>
+          <h3>No appointments found</h3>
+          <p>{hasFilters ? "Nothing matches these filters. Try a different status or date." : "New OP bookings will appear here."}</p>
+          {hasFilters && (
+            <button type="button" className="btn btn-primary btn-sm" onClick={clearFilters}>
+              Clear filters
+            </button>
+          )}
+        </div>
+      ) : (
+        <ul className={styles.list}>
+          {appointments.map((appointment, index) => (
+            <AppointmentCard
+              key={appointment.id}
+              appointment={appointment}
+              index={index}
+              busy={busyId === appointment.id}
+              onStatusChange={handleStatusChange}
+              onSittingChange={handleSittingChange}
+              onView={() => setViewing(appointment)}
+              onManageFees={() => setManagingFeesId(appointment.id)}
+              onReschedule={() => setRescheduling(appointment)}
+              onDelete={() => handleDelete(appointment)}
+              onExamine={onExamine ? () => onExamine(appointment.patientId) : undefined}
+            />
+          ))}
+        </ul>
+      )}
 
       {viewing && (
         <AppointmentDetailsModal
@@ -322,7 +234,26 @@ export function AppointmentsPanel({ refreshKey = 0, onExamine }: AppointmentsPan
           busy={busyId === viewing.id}
           onClose={() => setViewing(null)}
           onStatusChange={handleStatusChange}
+          onFeesChanged={() => load(true)}
         />
+      )}
+
+      {managingFees && (
+        <Modal
+          title={`Fees & Payments · ${managingFees.opNumber}`}
+          onClose={() => setManagingFeesId(null)}
+          wide
+        >
+          <p style={{ marginTop: 0 }}>
+            <strong>{managingFees.patientName}</strong> · {managingFees.mobile}
+          </p>
+          <FeesManager
+            appointmentId={managingFees.id}
+            opNumber={managingFees.opNumber}
+            fees={managingFees}
+            onChanged={() => load(true)}
+          />
+        </Modal>
       )}
 
       {rescheduling && (

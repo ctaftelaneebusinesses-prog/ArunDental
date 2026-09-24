@@ -8,9 +8,11 @@ interface ModalProps {
   onClose: () => void;
   children: ReactNode;
   wide?: boolean;
+  // Near full-screen — for spreadsheet-style previews with many columns.
+  extraWide?: boolean;
 }
 
-export function Modal({ title, onClose, children, wide = false }: ModalProps) {
+export function Modal({ title, onClose, children, wide = false, extraWide = false }: ModalProps) {
   useEffect(() => {
     function handleKey(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
@@ -22,7 +24,7 @@ export function Modal({ title, onClose, children, wide = false }: ModalProps) {
   return createPortal(
     <div className={styles.overlay} role="presentation" onClick={onClose}>
       <div
-        className={`${styles.panel} ${wide ? styles.panelWide : ""}`}
+        className={`${styles.panel} ${wide ? styles.panelWide : ""} ${extraWide ? styles.panelExtraWide : ""}`}
         role="dialog"
         aria-modal="true"
         aria-label={title}

@@ -5,7 +5,9 @@ const mobileRegex = /^[6-9]\d{9}$/;
 export const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "Unknown"] as const;
 export const genders = ["Male", "Female", "Other", "Prefer not to say"] as const;
 export const appointmentStatuses = ["Pending", "Confirmed", "Arrived", "Completed", "Cancelled"] as const;
-export const paymentStatuses = ["Payment Pending", "Payment Completed"] as const;
+export const paymentStatuses = ["Payment Pending", "Partially Paid", "Payment Completed"] as const;
+export type PaymentStatus = (typeof paymentStatuses)[number];
+export const paymentMethods = ["Cash", "UPI", "Card", "Bank Transfer", "Other"] as const;
 
 export const createAppointmentSchema = z.object({
   name: z.string().trim().min(2, "Please enter the patient's full name."),
@@ -39,15 +41,21 @@ export const updateAppointmentSittingSchema = z.object({
   sittingCount: z.coerce.number().int().min(1, "Sitting count can't go below 1.").max(50),
 });
 
-export const updateAppointmentPaymentStatusSchema = z
-  .object({
-    paymentStatus: z.enum(paymentStatuses).optional(),
-    // null clears the amount; omitted leaves it unchanged.
-    feeAmount: z.coerce.number().int().min(0, "Amount can't be negative.").max(10_000_000).nullable().optional(),
-  })
-  .refine((body) => body.paymentStatus !== undefined || body.feeAmount !== undefined, {
-    message: "Nothing to update.",
-  });
+export const updateAppointmentFeeSchema = z.object({
+  // Total fee in whole rupees; null clears it.
+  feeAmount: z.coerce.number().int().min(0, "Amount can't be negative.").max(10_000_000).nullable(),
+});
+
+export const addPaymentSchema = z.object({
+  amount: z.coerce.number().int("Enter the amount in whole rupees.").min(1, "Amount must be at least ₹1.").max(10_000_000),
+  method: z.enum(paymentMethods),
+  note: z.string().trim().max(200).optional(),
+  // "YYYY-MM-DD"; defaults to today.
+  paidOn: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Please choose a valid date.")
+    .optional(),
+});
 
 export const rescheduleAppointmentSchema = z.object({
   appointmentDate: z.string().min(1, "Please choose a date."),

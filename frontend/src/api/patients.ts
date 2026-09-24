@@ -40,6 +40,8 @@ export interface PatientExportRow {
   sittingCount: number | null;
   paymentStatus: string | null;
   feeAmount: number | null;
+  paidAmount: number | null;
+  dueAmount: number | null;
   createdAt: string;
 }
 

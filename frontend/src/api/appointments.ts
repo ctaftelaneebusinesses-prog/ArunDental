@@ -1,5 +1,5 @@
-import { apiGet, apiPatchJson, apiPostJson } from "./client";
-import type { AppointmentStatus, AppointmentSummary, OpConfirmationResult, PaymentStatus } from "../types";
+import { apiDelete, apiGet, apiPatchJson, apiPostJson } from "./client";
+import type { AppointmentStatus, AppointmentSummary, FeeDetails, OpConfirmationResult, PaymentMethod } from "../types";
 
 export interface BookOpFormValues {
   name: string;
@@ -56,11 +56,29 @@ export function updateAppointmentSitting(id: string, sittingCount: number) {
   return apiPatchJson(`/appointments/${id}/sitting`, { sittingCount });
 }
 
-export function updateAppointmentPaymentStatus(id: string, paymentStatus: PaymentStatus) {
-  return apiPatchJson(`/appointments/${id}/payment-status`, { paymentStatus });
+// Sets (or clears, with null) the OP's total fee.
+export function updateAppointmentFee(id: string, feeAmount: number | null): Promise<{ fees: FeeDetails }> {
+  return apiPatchJson(`/appointments/${id}/fee`, { feeAmount });
 }
 
-// null clears the amount.
-export function updateAppointmentFeeAmount(id: string, feeAmount: number | null) {
-  return apiPatchJson(`/appointments/${id}/payment-status`, { feeAmount });
+export interface NewPayment {
+  amount: number;
+  method: PaymentMethod;
+  note?: string;
+  // "YYYY-MM-DD"; the server defaults to today.
+  paidOn?: string;
+}
+
+export function addPayment(id: string, payment: NewPayment): Promise<{ fees: FeeDetails }> {
+  return apiPostJson(`/appointments/${id}/payments`, payment);
+}
+
+export function deletePayment(id: string, paymentId: string): Promise<{ fees: FeeDetails }> {
+  return apiDelete(`/appointments/${id}/payments/${paymentId}`);
+}
+
+// Permanently deletes the appointment — and the patient too, if this was their
+// only appointment.
+export function deleteAppointment(id: string): Promise<{ success: boolean; patientDeleted: boolean }> {
+  return apiDelete(`/appointments/${id}`);
 }

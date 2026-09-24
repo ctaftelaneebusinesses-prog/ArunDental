@@ -9,8 +9,16 @@ import { PatientAvatar } from "./PatientAvatar";
 import { ActionMenu, type ActionMenuItem } from "./ActionMenu";
 import { CancelXIcon, EyeIcon } from "./AdminIcons";
 import { UploadIcon } from "../icons/DentalIcons";
+import { FeesManager } from "./FeesManager";
 import tableStyles from "./AdminTable.module.css";
 import styles from "./PatientsPanel.module.css";
+
+type SheetCell = string | number | null | undefined;
+
+interface SheetData {
+  header: string[];
+  rows: SheetCell[][];
+}
 
 export function PatientsPanel() {
   const [query, setQuery] = useState("");
@@ -23,7 +31,8 @@ export function PatientsPanel() {
   const [detailLoading, setDetailLoading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
-  const [isExporting, setIsExporting] = useState(false);
+  const [isExporting, setIsExporting] = useState<"preview" | "download" | null>(null);
+  const [preview, setPreview] = useState<SheetData | null>(null);
 
   const load = useCallback(async () => {
     setIsLoading(true);
@@ -55,6 +64,14 @@ export function PatientsPanel() {
       .finally(() => setDetailLoading(false));
   }, [selectedId]);
 
+  // After a fee or payment changes in the profile, refresh it quietly.
+  function refreshSelectedPatient() {
+    if (!selectedId) return;
+    fetchPatient(selectedId)
+      .then((res) => setSelectedPatient(res.patient))
+      .catch(() => undefined);
+  }
+
   async function handleDelete(patient: PatientSummary) {
     if (
       !window.confirm(
@@ -76,12 +93,11 @@ export function PatientsPanel() {
     }
   }
 
-  async function handleExport() {
-    setIsExporting(true);
-    setActionError(null);
-    try {
-      const res = await exportPatients();
-      const header = [
+  // Fetches every patient and lays them out as sheet rows — shared by the
+  // Preview (shown in a dialog) and Download (saved as .csv for Excel).
+  async function buildSheet(): Promise<SheetData> {
+    const res = await exportPatients();
+    const header = [
         "OP Number",
         "Name",
         "Mobile",
@@ -96,7 +112,9 @@ export function PatientsPanel() {
         "Appointment Date",
         "Sittings",
         "Payment Status",
-        "Fee Amount (Rs)",
+        "Total Fee (Rs)",
+        "Paid (Rs)",
+        "Due (Rs)",
         "Registered On",
       ];
       const rows = res.patients.map((p) => [
@@ -115,13 +133,28 @@ export function PatientsPanel() {
         p.sittingCount,
         p.paymentStatus,
         p.feeAmount,
+        p.paidAmount,
+        p.dueAmount,
         new Date(p.createdAt).toLocaleDateString("en-IN"),
       ]);
-      downloadCsv(`patients-${new Date().toISOString().slice(0, 10)}.csv`, [header, ...rows]);
+    return { header, rows };
+  }
+
+  function downloadSheet(sheet: SheetData) {
+    downloadCsv(`patients-${new Date().toISOString().slice(0, 10)}.csv`, [sheet.header, ...sheet.rows]);
+  }
+
+  async function handleExport(mode: "preview" | "download") {
+    setIsExporting(mode);
+    setActionError(null);
+    try {
+      const sheet = await buildSheet();
+      if (mode === "preview") setPreview(sheet);
+      else downloadSheet(sheet);
     } catch (err) {
       setActionError(err instanceof ApiError ? err.message : "Failed to export patients.");
     } finally {
-      setIsExporting(false);
+      setIsExporting(null);
     }
   }
 
@@ -154,16 +187,67 @@ export function PatientsPanel() {
             Clear Filters
           </button>
         )}
-        <button
-          type="button"
-          className={`btn btn-primary btn-sm ${tableStyles.toolbarAction}`}
-          disabled={isExporting}
-          onClick={handleExport}
-        >
-          <UploadIcon width={16} height={16} style={{ transform: "rotate(180deg)" }} />
-          {isExporting ? "Preparing…" : "Download Excel Sheet"}
-        </button>
+        <div className={`${styles.exportActions} ${tableStyles.toolbarAction}`}>
+          <button
+            type="button"
+            className="btn btn-secondary btn-sm"
+            disabled={isExporting !== null}
+            onClick={() => handleExport("preview")}
+          >
+            <EyeIcon width={16} height={16} />
+            {isExporting === "preview" ? "Loading…" : "Preview Excel Sheet"}
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary btn-sm"
+            disabled={isExporting !== null}
+            onClick={() => handleExport("download")}
+          >
+            <UploadIcon width={16} height={16} style={{ transform: "rotate(180deg)" }} />
+            {isExporting === "download" ? "Preparing…" : "Download Excel Sheet"}
+          </button>
+        </div>
       </div>
+
+      {preview && (
+        <Modal title="Excel Sheet Preview" onClose={() => setPreview(null)} extraWide>
+          <div className={styles.previewBar}>
+            <span>
+              {preview.rows.length} patient{preview.rows.length === 1 ? "" : "s"} · {preview.header.length} columns
+            </span>
+            <button type="button" className="btn btn-primary btn-sm" onClick={() => downloadSheet(preview)}>
+              <UploadIcon width={16} height={16} style={{ transform: "rotate(180deg)" }} />
+              Download Excel Sheet
+            </button>
+          </div>
+          {preview.rows.length === 0 ? (
+            <p className={tableStyles.emptyState}>No patients to export yet.</p>
+          ) : (
+            <div className={styles.previewScroll}>
+              <table className={styles.previewTable}>
+                <thead>
+                  <tr>
+                    <th className={styles.previewRowNum}>#</th>
+                    {preview.header.map((col) => (
+                      <th key={col}>{col}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {preview.rows.map((row, i) => (
+                    <tr key={i}>
+                      <td className={styles.previewRowNum}>{i + 1}</td>
+                      {row.map((cell, j) => (
+                        <td key={j}>{cell == null || cell === "" ? "" : String(cell)}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Modal>
+      )}
 
       {actionError && (
         <div className="alert alert-error" role="alert">
@@ -236,7 +320,7 @@ export function PatientsPanel() {
       </div>
 
       {selectedId && (
-        <Modal title="Patient Profile" onClose={() => setSelectedId(null)}>
+        <Modal title="Patient Profile" onClose={() => setSelectedId(null)} wide>
           {detailLoading && <p>Loading patient details...</p>}
           {!detailLoading && selectedPatient && (
             <div className={styles.profile}>
@@ -293,19 +377,27 @@ export function PatientsPanel() {
                 )}
               </dl>
 
-              <h4 className={styles.historyHeading}>Appointment History</h4>
+              <h4 className={styles.historyHeading}>Appointments, Fees &amp; Payments</h4>
               {selectedPatient.appointments.length === 0 ? (
                 <p className={styles.noHistory}>No appointment history.</p>
               ) : (
-                <ul className={styles.historyList}>
-                  {selectedPatient.appointments.map((appointment) => (
-                    <li key={appointment.id}>
+                selectedPatient.appointments.map((appointment) => (
+                  <section key={appointment.id} className={styles.visitBlock}>
+                    <div className={styles.visitHead}>
+                      <strong>{appointment.opNumber}</strong>
                       <span>{appointment.appointmentDate}</span>
-                      <span>{appointment.appointmentTime || "—"}</span>
+                      <span>{appointment.appointmentTime || "Time not set"}</span>
+                      <span>Sitting {appointment.sittingCount}</span>
                       <AppointmentStatusBadge status={appointment.status} />
-                    </li>
-                  ))}
-                </ul>
+                    </div>
+                    <FeesManager
+                      appointmentId={appointment.id}
+                      opNumber={appointment.opNumber}
+                      fees={appointment}
+                      onChanged={refreshSelectedPatient}
+                    />
+                  </section>
+                ))
               )}
             </div>
           )}

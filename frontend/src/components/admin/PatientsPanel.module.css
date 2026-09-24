@@ -94,3 +94,91 @@
   gap: 10px;
   margin-bottom: 22px;
 }
+
+.exportActions {
+  flex-wrap: wrap;
+}
+
+.exportActions > :global(.btn),
+.previewBar > :global(.btn) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------- Excel sheet preview ---------- */
+.previewBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.previewScroll {
+  max-height: 65vh;
+  overflow: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.previewTable {
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.previewTable th,
+.previewTable td {
+  padding: 7px 12px;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.previewTable th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--color-pale-blue);
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.previewTable tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+.previewTable .previewRowNum {
+  width: 1%;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* One appointment (with its fees) in the patient profile. */
+.visitBlock {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+}
+
+.visitHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin-bottom: 14px;
+  font-size: 0.88rem;
+  color: var(--color-text-secondary);
+}
+
+.visitHead strong {
+  color: var(--color-primary);
+}

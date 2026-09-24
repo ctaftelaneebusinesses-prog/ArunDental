@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { prisma } from "../db/prisma";
 import { requireAuth } from "../middleware/auth.middleware";
+import { HttpError } from "../middleware/errorHandler.middleware";
 import { uploadPatientPhoto } from "../middleware/upload.middleware";
 import { publicFormRateLimiter } from "../middleware/rateLimit.middleware";
 import { generateOpNumber } from "../services/opNumber.service";
@@ -8,12 +9,14 @@ import { deletePatientPhoto, savePatientPhoto } from "../services/storage.servic
 import {
   createAppointmentSchema,
   rescheduleAppointmentSchema,
-  updateAppointmentPaymentStatusSchema,
+  addPaymentSchema,
+  updateAppointmentFeeSchema,
   updateAppointmentSittingSchema,
   updateAppointmentStatusSchema,
 } from "../utils/validation";
 import { CLINIC } from "../config/clinic";
 import { notifyNewOp } from "../services/notification.service";
+import { feeDetails, syncPaymentStatus } from "../services/fees.service";
 
 export const appointmentsRouter = Router();
 
@@ -89,7 +92,7 @@ appointmentsRouter.get("/", requireAuth, async (req, res, next) => {
         ...(typeof date === "string" && date ? { appointmentDate: date } : {}),
         ...(typeof status === "string" && status ? { status } : {}),
       },
-      include: { patient: true },
+      include: { patient: true, payments: true },
       orderBy: [{ appointmentDate: "desc" }, { createdAt: "desc" }],
     });
 
@@ -115,8 +118,8 @@ appointmentsRouter.get("/", requireAuth, async (req, res, next) => {
         appointmentTime: appointment.appointmentTime,
         status: appointment.status,
         sittingCount: appointment.sittingCount,
-        paymentStatus: appointment.paymentStatus,
-        feeAmount: appointment.feeAmount,
+        // feeAmount, paidAmount, dueAmount, paymentStatus and the payment history.
+        ...feeDetails(appointment),
         createdAt: appointment.createdAt,
       })),
     });
@@ -151,14 +154,101 @@ appointmentsRouter.patch("/:id/sitting", requireAuth, async (req, res, next) => 
   }
 });
 
-appointmentsRouter.patch("/:id/payment-status", requireAuth, async (req, res, next) => {
+const rupees = (amount: number) => `₹${amount.toLocaleString("en-IN")}`;
+
+// Sets (or clears) the OP's total fee. It can't go below what's already been paid.
+appointmentsRouter.patch("/:id/fee", requireAuth, async (req, res, next) => {
   try {
-    const { paymentStatus, feeAmount } = updateAppointmentPaymentStatusSchema.parse(req.body);
-    const appointment = await prisma.appointment.update({
-      where: { id: req.params.id },
-      data: { paymentStatus, feeAmount },
+    const { feeAmount } = updateAppointmentFeeSchema.parse(req.body);
+    const fees = await prisma.$transaction(async (tx) => {
+      const appointment = await tx.appointment.findUnique({ where: { id: req.params.id }, include: { payments: true } });
+      if (!appointment) throw new HttpError(404, "Appointment not found.");
+      const { paidAmount } = feeDetails(appointment);
+      if (paidAmount > 0 && (feeAmount == null || feeAmount < paidAmount)) {
+        throw new HttpError(400, `Total fee can't be less than the ${rupees(paidAmount)} already paid.`);
+      }
+      await tx.appointment.update({ where: { id: appointment.id }, data: { feeAmount } });
+      return syncPaymentStatus(tx, appointment.id);
     });
-    res.json({ appointment });
+    res.json({ fees });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Records an amount received. Needs a total fee first, and can't exceed what's due.
+appointmentsRouter.post("/:id/payments", requireAuth, async (req, res, next) => {
+  try {
+    const { amount, method, note, paidOn } = addPaymentSchema.parse(req.body);
+    const fees = await prisma.$transaction(async (tx) => {
+      const appointment = await tx.appointment.findUnique({ where: { id: req.params.id }, include: { payments: true } });
+      if (!appointment) throw new HttpError(404, "Appointment not found.");
+      const { feeAmount, dueAmount } = feeDetails(appointment);
+      if (feeAmount == null || feeAmount === 0) {
+        throw new HttpError(400, "Please set the total fee before recording a payment.");
+      }
+      if (amount > (dueAmount ?? 0)) {
+        throw new HttpError(400, dueAmount ? `Amount is more than the due of ${rupees(dueAmount)}.` : "This OP is already fully paid.");
+      }
+      await tx.payment.create({
+        data: {
+          appointmentId: appointment.id,
+          amount,
+          method,
+          note: note || null,
+          // Noon IST on the chosen day, so the date never shifts across time zones.
+          ...(paidOn ? { paidAt: new Date(`${paidOn}T12:00:00+05:30`) } : {}),
+        },
+      });
+      return syncPaymentStatus(tx, appointment.id);
+    });
+    res.status(201).json({ fees });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Removes a payment entered by mistake.
+appointmentsRouter.delete("/:id/payments/:paymentId", requireAuth, async (req, res, next) => {
+  try {
+    const fees = await prisma.$transaction(async (tx) => {
+      const payment = await tx.payment.findUnique({ where: { id: req.params.paymentId } });
+      if (!payment || payment.appointmentId !== req.params.id) throw new HttpError(404, "Payment not found.");
+      await tx.payment.delete({ where: { id: payment.id } });
+      return syncPaymentStatus(tx, payment.appointmentId);
+    });
+    res.json({ fees });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Permanently removes an appointment (e.g. a duplicate or test booking). If it
+// was the patient's only appointment, the patient record and photo go too, so
+// no empty patient is left behind. There is no undo.
+appointmentsRouter.delete("/:id", requireAuth, async (req, res, next) => {
+  try {
+    const appointment = await prisma.appointment.findUnique({
+      where: { id: req.params.id },
+      include: { patient: { include: { _count: { select: { appointments: true } } } } },
+    });
+    if (!appointment) {
+      throw new HttpError(404, "Appointment not found.");
+    }
+
+    const { patient } = appointment;
+    const removePatient = patient._count.appointments <= 1;
+
+    await prisma.$transaction([
+      prisma.appointment.delete({ where: { id: appointment.id } }),
+      ...(removePatient ? [prisma.patient.delete({ where: { id: patient.id } })] : []),
+    ]);
+
+    if (removePatient && patient.photoPath) {
+      await deletePatientPhoto(patient.photoPath).catch(() => undefined);
+    }
+
+    res.json({ success: true, patientDeleted: removePatient });
   } catch (err) {
     next(err);
   }

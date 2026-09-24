@@ -3,6 +3,7 @@ import { prisma } from "../db/prisma";
 import { requireAuth } from "../middleware/auth.middleware";
 import { HttpError } from "../middleware/errorHandler.middleware";
 import { downloadPatientPhoto, deletePatientPhoto } from "../services/storage.service";
+import { feeDetails } from "../services/fees.service";
 
 export const patientsRouter = Router();
 
@@ -16,27 +17,33 @@ patientsRouter.get("/export", async (_req, res, next) => {
       orderBy: { createdAt: "desc" },
       // Only the most recent appointment — a patient can have several over
       // time, and the sheet shows one status per row.
-      include: { appointments: { orderBy: { createdAt: "desc" }, take: 1 } },
+      include: { appointments: { orderBy: { createdAt: "desc" }, take: 1, include: { payments: true } } },
     });
     res.json({
-      patients: patients.map((patient) => ({
-        opNumber: patient.opNumber,
-        name: patient.name,
-        mobile: patient.mobile,
-        age: patient.age,
-        gender: patient.gender,
-        bloodGroup: patient.bloodGroup,
-        occupation: patient.occupation,
-        address: patient.address,
-        dentalProblem: patient.dentalProblem,
-        previousTreatment: patient.previousTreatment,
-        status: patient.appointments[0]?.status ?? null,
-        appointmentDate: patient.appointments[0]?.appointmentDate ?? null,
-        sittingCount: patient.appointments[0]?.sittingCount ?? null,
-        paymentStatus: patient.appointments[0]?.paymentStatus ?? null,
-        feeAmount: patient.appointments[0]?.feeAmount ?? null,
-        createdAt: patient.createdAt,
-      })),
+      patients: patients.map((patient) => {
+        const latest = patient.appointments[0];
+        const fees = latest ? feeDetails(latest) : null;
+        return {
+          opNumber: patient.opNumber,
+          name: patient.name,
+          mobile: patient.mobile,
+          age: patient.age,
+          gender: patient.gender,
+          bloodGroup: patient.bloodGroup,
+          occupation: patient.occupation,
+          address: patient.address,
+          dentalProblem: patient.dentalProblem,
+          previousTreatment: patient.previousTreatment,
+          status: patient.appointments[0]?.status ?? null,
+          appointmentDate: patient.appointments[0]?.appointmentDate ?? null,
+          sittingCount: patient.appointments[0]?.sittingCount ?? null,
+          paymentStatus: fees?.paymentStatus ?? null,
+          feeAmount: fees?.feeAmount ?? null,
+          paidAmount: fees?.paidAmount ?? null,
+          dueAmount: fees?.dueAmount ?? null,
+          createdAt: patient.createdAt,
+        };
+      }),
     });
   } catch (err) {
     next(err);
@@ -90,14 +97,22 @@ patientsRouter.get("/:id", async (req, res, next) => {
   try {
     const patient = await prisma.patient.findUnique({
       where: { id: req.params.id },
-      include: { appointments: { orderBy: { appointmentDate: "desc" } } },
+      include: { appointments: { orderBy: { appointmentDate: "desc" }, include: { payments: true } } },
     });
 
     if (!patient) {
       throw new HttpError(404, "Patient not found.");
     }
 
-    res.json({ patient });
+    res.json({
+      patient: {
+        ...patient,
+        appointments: patient.appointments.map(({ payments, ...appointment }) => ({
+          ...appointment,
+          ...feeDetails({ feeAmount: appointment.feeAmount, payments }),
+        })),
+      },
+    });
   } catch (err) {
     next(err);
   }

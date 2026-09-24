@@ -6,6 +6,7 @@ import { Modal } from "../Modal";
 import { PhoneIcon, WhatsAppIcon } from "../icons/DentalIcons";
 import { AppointmentStatusBadge } from "./StatusBadge";
 import { StatusSelect } from "./StatusSelect";
+import { FeesManager } from "./FeesManager";
 import styles from "./PatientsPanel.module.css";
 
 interface Props {
@@ -13,9 +14,10 @@ interface Props {
   busy: boolean;
   onClose: () => void;
   onStatusChange: (id: string, status: AppointmentStatus) => void;
+  onFeesChanged?: () => void;
 }
 
-export function AppointmentDetailsModal({ appointment, busy, onClose, onStatusChange }: Props) {
+export function AppointmentDetailsModal({ appointment, busy, onClose, onStatusChange, onFeesChanged }: Props) {
   const photoUrl = patientPhotoUrl(appointment.patientId);
   const whatsappText = opConfirmationText(appointment);
 
@@ -93,13 +95,6 @@ export function AppointmentDetailsModal({ appointment, busy, onClose, onStatusCh
           <dt>Sitting</dt>
           <dd>{appointment.sittingCount}</dd>
         </div>
-        <div>
-          <dt>Fees</dt>
-          <dd>
-            {appointment.paymentStatus}
-            {appointment.feeAmount != null && ` · ₹${appointment.feeAmount.toLocaleString("en-IN")}`}
-          </dd>
-        </div>
         <div className={styles.fullWidth}>
           <dt>Address</dt>
           <dd>{appointment.address}</dd>
@@ -113,6 +108,14 @@ export function AppointmentDetailsModal({ appointment, busy, onClose, onStatusCh
           <dd>{appointment.previousTreatment || "Not provided"}</dd>
         </div>
       </dl>
+
+      <h4 className={styles.historyHeading}>Fees &amp; Payments</h4>
+      <FeesManager
+        appointmentId={appointment.id}
+        opNumber={appointment.opNumber}
+        fees={appointment}
+        onChanged={onFeesChanged}
+      />
     </Modal>
   );
 }

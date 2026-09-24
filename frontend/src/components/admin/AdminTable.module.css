@@ -136,6 +136,21 @@
   color: #128c4b;
 }
 
+.dangerBtn {
+  color: var(--color-danger);
+}
+
+.dangerBtn:hover {
+  background: var(--color-danger-bg);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.iconBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .iconBtn:focus-visible {
   outline: 3px solid var(--color-primary);
   outline-offset: 2px;
